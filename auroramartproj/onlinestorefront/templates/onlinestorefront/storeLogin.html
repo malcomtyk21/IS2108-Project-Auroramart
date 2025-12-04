@@ -1,0 +1,35 @@
+{% extends 'onlinestorefront/base_store.html' %}
+{% load static crispy_forms_tags %}
+
+{% block title %}Login - AuroraMart{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/background.css' %}">
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/login_register.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height:60vh">
+    <div class="login-panel bg-white shadow-sm rounded p-4">
+        <h2 class="h4 mb-3 text-center">Log in</h2>
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">{{ form.non_field_errors|striptags }}</div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form|crispy }}
+
+            <div class="d-grid mt-3">
+                <button type="submit" class="store-btn">Login</button>
+            </div>
+        </form>
+
+        <div class="text-center mt-3">
+            <small>Don't have an account? <a href="{% url 'onlinestorefront:register' %}">Register here</a></small>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

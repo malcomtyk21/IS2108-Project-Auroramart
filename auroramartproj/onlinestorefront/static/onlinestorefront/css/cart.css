@@ -1,0 +1,354 @@
+/* Styles specific to the Cart page */
+
+/* Product thumbnail in cart rows */
+.cart-product-thumb {
+  border: 1px solid #e6e7ea;
+  background: #fafafa;
+  color: #374151;
+  font-size: 0.9rem;
+  width: 140px;
+  aspect-ratio: 1 / 1;
+  /* enforce square */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  overflow: hidden;
+  /* ensure img is clipped to rounded corners */
+  z-index: 0; /* keep thumbnails beneath form controls like checkboxes */
+}
+
+/* Card spacing tweaks for cart rows */
+.card.shadow-sm {
+  overflow: visible;
+}
+
+.card .card-body {
+  padding: 1rem;
+}
+
+/* Position the select checkbox at the left of the thumbnail and remove top margin */
+.card .card-body .form-check {
+  margin-top: 0;
+  margin-right: .75rem;
+  position: relative; /* keep in flow on wide screens */
+  z-index: 6; /* ensure checkbox is above adjacent thumbnail/link */
+  pointer-events: auto; /* ensure it's clickable even if siblings overlap */
+}
+
+/* Make the cart checkboxes more obvious and touch-friendly.
+   Scope these styles to the card cart rows so Bootstrap-wide styles aren't changed. */
+.card .card-body .form-check-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  border-radius: 6px;
+  border: 2px solid #d1d5db; /* neutral border */
+  background: #ffffff;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  transition: background .12s ease, border-color .12s ease, transform .08s ease, box-shadow .12s ease;
+  box-shadow: 0 2px 6px rgba(16,24,40,0.04);
+}
+
+.card .card-body .form-check-input:hover {
+  transform: translateY(-1px);
+}
+
+/* Checkmark (drawn using borders) */
+.card .card-body .form-check-input::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 4px;
+  width: 6px;
+  height: 12px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transform-origin: center;
+  transition: transform .14s cubic-bezier(.2,.9,.2,1);
+}
+
+.card .card-body .form-check-input:checked {
+  background: var(--brand-cyan, #06b6d4);
+  border-color: var(--brand-cyan, #06b6d4);
+}
+
+.card .card-body .form-check-input:checked::after {
+  transform: rotate(45deg) scale(1);
+}
+
+/* Focus-visible accessibility ring */
+.card .card-body .form-check-input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(6,182,212,0.12);
+}
+
+/* Smaller checkboxes on very small viewports while keeping tappable area */
+@media (max-width: 480px) {
+  .card .card-body .form-check-input {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    left: 0;
+  }
+  .card .card-body .form-check-input::after { left: 6px; top: 3px; }
+}
+
+/* Make sure the stretched-link doesn't cover controls outside the middle column */
+.flex-grow-1 .stretched-link {
+  /* ensure it sits beneath interactive elements (if any overlap) */
+  z-index: 0;
+}
+
+/* Keep quantity controls compact on small screens */
+@media (max-width: 575px) {
+  .cart-product-thumb {
+    width: 120px;
+    /* keep square on small screens */
+    aspect-ratio: 1 / 1;
+  }
+
+  .card .card-body {
+    gap: .75rem;
+  }
+}
+
+/* Subtle right-aligned action area */
+.card .d-flex .text-end {
+  min-width: 120px;
+}
+
+/* Center the number value inside the quantity input */
+.card .card-body input[type="number"] {
+  text-align: center;
+}
+
+/* Remove native number input spinners (up/down arrows) */
+/* WebKit (Chrome, Safari, Edge) */
+.card .card-body input[type="number"]::-webkit-outer-spin-button,
+.card .card-body input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.card .card-body input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Empty cart message */
+.store-main p {
+  font-size: 1rem;
+  color: #6b7280;
+}
+
+/* --------------------
+   Recommendations grid
+   -------------------- */
+/* Recommendations grid uses shared product-card component.
+   Make "Complete the set" behave like the product detail "Frequently Bought Together"
+   strip: horizontally scrollable, touch-friendly, and snap-aligned. */
+.complete-set-grid {
+  display: flex;
+  gap: 20px;
+  padding: 8px 6px 12px;
+  /* Keep the strip in a single line and allow horizontal scrolling */
+  flex-wrap: nowrap;
+  align-items: stretch;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.complete-set-grid:focus-visible {
+  outline: 2px solid rgba(0,0,0,0.06);
+  outline-offset: 2px;
+}
+
+/* The row uses Bootstrap "col" wrappers; size the cols in the scroll strip
+   and ensure the product-card fills the column. */
+.complete-set-grid > .col {
+  flex: 0 0 220px; /* slightly wider fixed card width in the scroll strip */
+  min-width: 180px;
+  scroll-snap-align: start;
+  display: flex; /* make inner product-card stretch vertically */
+}
+
+.complete-set-grid > .col .product-card {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 60px; /* keep consistent spacing under cards */
+}
+
+@media (max-width: 640px) {
+  .complete-set-grid > .col { flex: 0 0 180px; min-width: 140px; }
+}
+
+@media (max-width: 480px) {
+  .complete-set-grid > .col { flex: 0 0 160px; min-width: 120px; }
+}
+
+/* Image elements inside cart and recommendation thumbnails */
+.cart-thumb-img,
+.rec-thumb-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* fill the square while preserving aspect ratio */
+}
+
+/* ----- Card hover / focus animations similar to product_card.css ----- */
+.cart-row-card {
+  transition: transform .20s cubic-bezier(.2, .9, .2, 1), box-shadow .20s ease, border-color .18s ease;
+  will-change: transform, box-shadow;
+}
+
+/* Animate the cart-row only when hovering or focusing the image or main content
+   Use :has() so the parent card responds only when its interactive children are targeted.
+   Note: :has() is broadly supported in modern browsers (Chrome/Edge/Safari/Firefox recent versions).
+*/
+.cart-row-card:has(.cart-product-thumb:hover),
+.cart-row-card:has(.flex-grow-1:hover),
+.cart-row-card:has(.cart-product-thumb:focus-within),
+.cart-row-card:has(.flex-grow-1:focus-within) {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.12);
+  z-index: 10;
+}
+
+/* Active (pressed) state when interacting with image or main content */
+.cart-row-card:has(.cart-product-thumb:active),
+.cart-row-card:has(.flex-grow-1:active) {
+  transform: translateY(-3px) scale(0.997);
+  box-shadow: 0 8px 20px rgba(16, 24, 40, 0.10);
+}
+
+/* Slightly scale the thumbnail image when card is hovered/focused */
+.cart-row-card .cart-thumb-img {
+  transition: transform .32s cubic-bezier(.2, .9, .2, 1);
+}
+
+/* Scale the thumbnail only when hovering/focusing the thumbnail or the main content */
+.cart-row-card:has(.cart-product-thumb:hover) .cart-thumb-img,
+.cart-row-card:has(.flex-grow-1:hover) .cart-thumb-img,
+.cart-row-card:has(.cart-product-thumb:focus-within) .cart-thumb-img,
+.cart-row-card:has(.flex-grow-1:focus-within) .cart-thumb-img {
+  transform: scale(1.06);
+}
+
+/* Reduced motion: respect user preferences */
+@media (prefers-reduced-motion: reduce) {
+
+  .cart-row-card,
+  .cart-row-card .cart-thumb-img,
+  .complete-set-grid .product-card {
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Mobile-friendly adjustments: make the cart-row cards stack and controls fit
+   comfortably on small screens. These overrides intentionally use
+   higher-specificity or !important to override inline styles set in templates. */
+@media (max-width: 767px) {
+  .cart-product-thumb {
+    width: 100px;
+    aspect-ratio: 1 / 1;
+  }
+
+  .card .card-body {
+    gap: .5rem;
+    padding: .75rem;
+    position: relative;
+    padding-left: 56px; /* reserve space for the absolute checkbox */
+  }
+
+  /* Override the inline min-width on the right-side action area so it can
+     wrap below the main content on narrow screens */
+  .card .align-items-end.ms-md-auto {
+    min-width: 0 !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: .5rem;
+  }
+
+  /* Make the quantity controls use less fixed width so they fit horizontally */
+  .card .card-body input[type="number"] {
+    width: 56px !important;
+    min-width: 56px !important;
+  }
+
+  .card .card-body form.d-flex {
+    gap: 6px;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  /* Ensure the thumbnail link doesn't push other elements off-screen */
+  .cart-product-thumb {
+    flex: 0 0 auto;
+    margin-left: 0; /* content starts after padded area */
+  }
+
+  /* Position the select checkbox vertically centered on the left side of
+     the card so it appears middle-left on mobile instead of at the top. */
+  .card .card-body .form-check {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 6;
+    margin: 0; /* remove any flow margins */
+  }
+
+  /* Make the product description area take remaining space and keep the
+     stretched-link behavior correct */
+  .flex-grow-1 {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-product-thumb {
+    width: 88px;
+  }
+
+  /* Slightly reduce left offset on very small screens so checkbox doesn't
+     overlap the thumbnail or push content too far right. */
+  .cart-product-thumb {
+    margin-left: 0;
+  }
+
+  .card .card-body .form-check {
+    left: 8px;
+  }
+
+  .card .card-body {
+    padding-left: 48px; /* slightly smaller reserved area on very small screens */
+  }
+
+  /* On very small screens, convert action area to a compact row so buttons
+     remain usable without horizontal scrolling */
+  .card .align-items-end.ms-md-auto {
+    justify-content: flex-end;
+    gap: .4rem;
+  }
+
+  /* Make sure quantity input is still usable on tiny viewports */
+  .card .card-body input[type="number"] {
+    width: 48px !important;
+    min-width: 48px !important;
+  }
+}

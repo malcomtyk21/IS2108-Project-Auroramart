@@ -1,0 +1,87 @@
+.settings-nav {
+    gap: 4px;
+}
+
+.settings-link {
+    display: block;
+    padding: .5rem .75rem;
+    border-radius: .375rem;
+    color: var(--ink, #212529);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    transition: color .18s ease, transform .12s ease;
+    position: relative;
+}
+
+/* Gradient underline */
+.settings-link::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 2px;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+    border-radius: 2px;
+    transition: width .22s ease;
+}
+
+.settings-link:hover::before,
+.settings-link:focus::before,
+.settings-link.active::before {
+    width: calc(100% - 24px);
+}
+
+.settings-link:hover,
+.settings-link:focus {
+    color: var(--ink);
+    transform: translateY(-1px);
+}
+
+
+.settings-link.active {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.settings-link:active {
+    transform: translateY(0) scale(0.998);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .settings-link {
+        transition: none !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+}
+
+.saved-list {
+    display: grid;
+    gap: .75rem;
+}
+
+.saved-card {
+    padding: .75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: .375rem;
+    background: #fff;
+}
+
+.saved-title {
+    font-weight: 600;
+}
+
+.saved-meta {
+    font-size: .875rem;
+    color: #6b7280;
+}
+
+.saved-address {
+    white-space: pre-line;
+    font-size: .9rem;
+    margin-top: .25rem;
+}

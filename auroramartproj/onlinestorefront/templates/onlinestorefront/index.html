@@ -1,0 +1,37 @@
+{% extends 'onlinestorefront/base_store.html' %}
+{% load static %}
+{% block title %}Home | AuroraMart{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/product_card.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="index-hero">
+    <h1 class="display-5">Welcome to AuroraMart!</h1>
+    {% if not user.is_authenticated %}
+    <p class="lead">Log in to your account to have access to personalized recommendations.</p>
+    {% else %}
+        {% if preferred_category %}
+        <p class="lead">Based on your preferences, here are some suggested items from {{ preferred_category }}.</p>
+        {% else %}
+        <p class="lead">Explore our wide range of products.</p>
+        {% endif %}
+    {% endif %}
+</div>
+
+<div class="container category-row">
+    <div class="row-header">
+        <h3>Discover</h3>
+    </div>
+    <div class="product-grid cols-4">
+        {% if random_products %}
+            {% for product in random_products %}
+                {% include 'onlinestorefront/product_card.html' with product=product %}
+            {% endfor %}
+        {% else %}
+            <p>No products available.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

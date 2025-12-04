@@ -1,0 +1,61 @@
+{% extends 'onlinestorefront/base_store.html' %}
+{% load static %}
+{% block title %}{{ category_name }} Products | AuroraMart{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/category.css' %}">
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/product_card.css' %}">
+{% endblock %}
+{% block content %}
+<div class="index-hero">
+  <h1 class="display-6">{{ category_name }}</h1>
+</div>
+
+<div class="container category-row">
+  {% if subcategories %}
+  <h2>Sub-Categories</h2>
+  <p class="lead">Browse subcategories under {{ category_name }}.</p>
+  <div class="subcategory-list mb-4">
+    {% for sub in subcategories %}
+    <a href="{% url 'onlinestorefront:subcategory' category_name sub.name %}" class="subcategory-card" role="button" aria-label="View {{ sub.name }} products">
+      <div class="subcategory-circle">{{ sub.name|slice:":1"|upper }}</div>
+      <div class="subcategory-label">{{ sub.name }}</div>
+    </a>
+    {% endfor %}
+  </div>
+  <h2>Products</h2>
+  <div class="product-grid">
+    {% if page_obj and page_obj.object_list %}
+      {% for product in page_obj.object_list %}
+        {% include 'onlinestorefront/product_card.html' with product=product %}
+      {% endfor %}
+    {% else %}
+      <p>No products in this category.</p>
+    {% endif %}
+  </div>
+
+  <nav aria-label="Category pagination" class="mt-4">
+    <ul class="pagination category-pagination justify-content-center">
+      {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+      {% else %}
+      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+      {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% else %}
+  <p>No subcategories for this category.</p>
+  {% endif %}
+</div>
+{% endblock %}

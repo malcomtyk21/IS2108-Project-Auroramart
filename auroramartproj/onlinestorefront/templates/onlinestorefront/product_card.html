@@ -1,0 +1,23 @@
+<div class="product-card">
+    <div class="product-image">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.product_name }}" loading="lazy">
+        {% else %}
+            <img src="{{ MEDIA_URL }}products/placeholder_kqmhtJz.jpg" alt="Placeholder for {{ product.product_name }}" loading="lazy">
+        {% endif %}
+    </div>
+    <div class="product-meta">
+        <div>
+            <p class="product-title">{{ product.product_name }}</p>
+            <p class="product-price">${{ product.unit_price|floatformat:2 }}</p>
+        </div>
+    </div>
+    <form method="post" action="{% url 'onlinestorefront:cart_add' product.id %}" class="add-to-cart-form">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="store-icon-btn" aria-label="Add {{ product.product_name }} to cart" title="Add to cart">
+            <span class="material-icons">add_shopping_cart</span>
+        </button>
+    </form>
+    <a href="{% url 'onlinestorefront:product_detail' product.id %}" class="stretched-link" aria-label="View {{ product.product_name }} details"></a>
+</div>

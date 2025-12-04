@@ -1,0 +1,232 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}AuroraMart Store{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Sora (body) + Raleway (headings) -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Shared store styles -->
+    <link rel="stylesheet" href="{% static 'onlinestorefront/css/base_store.css' %}">
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="store-body">
+    <header class="store-header border-bottom bg-white">
+        <div class="container-fluid px-3 px-md-4 py-3">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <a href="{% url 'onlinestorefront:index' %}"
+                    class="d-inline-flex align-items-center text-decoration-none me-1">
+                    <img src="{% static 'images/auroramart-logo.svg' %}" alt="AuroraMart" height="36">
+                </a>
+
+                <div class="dropdown me-2 d-none d-md-block">
+                    <button type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        class="btn nav-button btn-categories px-3 d-flex align-items-center">
+                        <span>Categories</span>
+                        <span class="material-icons icon icon-chevron ms-2" aria-hidden="true">expand_more</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        {# Dynamically render categories and subcategories provided by the context processor #}
+                        {% for cat in site_categories %}
+                        {% if cat.subcategories %}
+                        <li class="dropdown-category has-children">
+                            <button type="button" class="category-toggle dropdown-item d-flex align-items-center justify-content-between w-100"
+                                aria-expanded="false" aria-controls="panel-{{ forloop.counter }}" aria-label="Toggle {{ cat.name }} subcategories">
+                                <span class="category-label">{{ cat.name }}</span>
+                                <span class="material-icons expand-icon" aria-hidden="true">expand_more</span>
+                            </button>
+                            <div id="panel-{{ forloop.counter }}" class="subcategory-panel" hidden>
+                                          <a class="dropdown-item subcategory-item subcategory-all"
+                                              href="{% url 'onlinestorefront:category' cat.name %}">All {{ cat.name }}</a>
+                                          {% for sub in cat.subcategories %}
+                                          <a class="dropdown-item subcategory-item"
+                                              href="{% url 'onlinestorefront:subcategory' cat.name sub %}">{{ sub }}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                        {% else %}
+                        <li>
+                                     <a class="dropdown-item"
+                                         href="{% url 'onlinestorefront:category' cat.name %}">{{ cat.name }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Search bar -->
+                <form class="d-none d-md-flex flex-grow-1 store-search" role="search" action="{% url 'onlinestorefront:search' %}" method="get">
+                    <div class="input-group">
+                        <input type="search" class="form-control store-search-input" value="{{ request.GET.q|default:'' }}"
+                            placeholder="Search products..." aria-label="Search products" name="q" minlength="2">
+                        <!-- Search button using Material Icon -->
+                        <button class="btn btn-outline-gradient-border btn-search" type="submit" aria-label="Search">
+                            <span class="material-icons icon icon-search" aria-hidden="true">search</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Auth / Profile -->
+                <div class="ms-auto d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                    <!-- Hide icon cart on mobile; mobile shows text cart in the menu -->
+                    <a href="{% url 'onlinestorefront:cart' %}" class="btn store-icon-btn nav-cart position-relative me-4 d-none d-md-inline-flex" aria-label="View Cart">
+                        <span class="material-icons">shopping_cart</span>
+                        {% if cart_item_count %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark"
+                            aria-label="Items in cart">{{ cart_item_count }}</span>
+                        {% endif %}
+                    </a>
+
+                    <!-- Hide profile dropdown on mobile; mobile menu shows expanded options -->
+                    <div class="dropdown d-none d-md-block">
+                        <button class="btn p-0 border-0 bg-transparent d-inline-flex align-items-center gap-2 profile-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="profile-circle">{{ user.username|first|upper }}</span>
+                            <span class="icon icon-chevron material-icons" aria-hidden="true">expand_more</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="px-3 py-2"><small class="text-muted">Hi, {{ user.username }}!</small></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'onlinestorefront:settings' %}">Settings</a></li>
+                            <li><a class="dropdown-item" href="{% url 'onlinestorefront:orders' %}">Orders</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form method="post" action="{% url 'onlinestorefront:storeLogout' %}" class="px-3 py-1">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link p-0 text-decoration-none">Logout</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'onlinestorefront:storeLogin' %}" class="nav-button btn-login me-2 d-none d-md-inline-block">Log In</a>
+                    <a href="{% url 'onlinestorefront:register' %}" class="nav-button btn-signup d-none d-md-inline-block">Sign Up</a>
+                    {% endif %}
+
+                    <!-- Mobile hamburger on the right (visible only on small screens) -->
+                    <button class="btn nav-button d-inline-flex d-md-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-label="Open menu">
+                        <span class="material-icons">menu</span>
+                    </button>
+                    </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile offcanvas menu (dropdown from top) -->
+    <div class="offcanvas offcanvas-top" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="mobileNavLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- Mobile search included in the offcanvas -->
+            <div class="mb-3">
+                <form class="store-search" role="search" action="{% url 'onlinestorefront:search' %}" method="get">
+                    <div class="input-group">
+                        <input type="search" class="form-control" name="q" value="{{ request.GET.q|default:'' }}"
+                            placeholder="Search products..." aria-label="Search products" minlength="2">
+                        <button class="btn btn-search" type="submit" aria-label="Search">
+                            <span class="material-icons">search</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Mobile auth buttons: show above Home when not authenticated -->
+            <div class="mb-3">
+                {% if not user.is_authenticated %}
+                <div class="d-flex gap-2">
+                    <a href="{% url 'onlinestorefront:storeLogin' %}" class="store-btn w-50">Log In</a>
+                    <a href="{% url 'onlinestorefront:register' %}" class="store-btn w-50">Sign Up</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Cart as simple text button on mobile -->
+            <div class="mb-3">
+                <a href="{% url 'onlinestorefront:index' %}" class="store-btn w-100">Home</a>
+            </div>
+
+            {% if user.is_authenticated %}
+            <div class="mb-3">
+                <a href="{% url 'onlinestorefront:cart' %}" class="store-btn w-100">
+                    Cart ({% if cart_item_count %}{{ cart_item_count }}{% else %}0{% endif %})
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Categories (keep same expandable design) -->
+            <div class="mobile-nav-section mb-3">
+                <div class="mb-2"><small class="text-muted">Categories</small></div>
+                <ul class="list-unstyled m-0 p-0">
+                    {% for cat in site_categories %}
+                    {% if cat.subcategories %}
+                    <li class="dropdown-category has-children">
+                        <button type="button" class="category-toggle dropdown-item d-flex align-items-center justify-content-between w-100"
+                            aria-expanded="false" aria-controls="m-panel-{{ forloop.counter }}" aria-label="Toggle {{ cat.name }} subcategories">
+                            <span class="category-label">{{ cat.name }}</span>
+                            <span class="material-icons expand-icon" aria-hidden="true">expand_more</span>
+                        </button>
+                        <div id="m-panel-{{ forloop.counter }}" class="subcategory-panel" hidden>
+                                     <a class="dropdown-item subcategory-item subcategory-all"
+                                         href="{% url 'onlinestorefront:category' cat.name %}">All {{ cat.name }}</a>
+                                     {% for sub in cat.subcategories %}
+                                     <a class="dropdown-item subcategory-item"
+                                         href="{% url 'onlinestorefront:subcategory' cat.name sub %}">{{ sub }}</a>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    {% else %}
+                    <li>
+                        <a class="dropdown-item" href="{% url 'onlinestorefront:category' cat.name %}">{{ cat.name }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- User section expanded on mobile -->
+            <div class="mobile-nav-section">
+                {% if user.is_authenticated %}
+                <div class="mb-2"><small class="text-muted">Account</small></div>
+                <div class="px-2 mb-2"><small class="text-muted">Hi, {{ user.username }}!</small></div>
+                <div class="list-group mb-2">
+                    <a class="list-group-item list-group-item-action" href="{% url 'onlinestorefront:settings' %}">Settings</a>
+                    <a class="list-group-item list-group-item-action" href="{% url 'onlinestorefront:orders' %}">Orders</a>
+                </div>
+                <form method="post" action="{% url 'onlinestorefront:storeLogout' %}" class="mt-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0 text-decoration-none">Logout</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <main class="store-main min-vh-100 hero">
+        <div class="store-inner">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="store-footer border-top py-3 text-center text-muted small">
+        &copy; AuroraMart 2025
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_scripts %}
+    <script src="{% static 'onlinestorefront/js/navbar.js' %}"></script>
+    {% endblock %}
+</body>
+
+</html>

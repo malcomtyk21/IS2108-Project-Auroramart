@@ -1,0 +1,693 @@
+/* Store layout & header styles */
+
+:root {
+  --accent1: #00e5ff;
+  --accent2: #6a5ae0;
+  --accent3: #c471ed;
+  --ink: #111827;
+  /* Brand cyan for solid buttons (no gradient) */
+  --brand-cyan: #087E99;
+  /* updated primary */
+  --brand-cyan-hover: #066b82;
+  /* darker hover */
+  --brand-cyan-active: #054e63;
+  /* active (pressed) */
+  --brand-btn-ink: #f3f4f6;
+  /* text/icon on cyan */
+  /* Danger tokens for destructive actions */
+  --brand-danger: #ef4444;
+  /* red-500 */
+  --brand-danger-hover: #dc2626;
+  /* red-600 */
+  --brand-danger-active: #b91c1c;
+  /* red-700 */
+  --brand-danger-ink: #ffffff;
+  /* Font stacks */
+  --font-sans: 'Sora', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: 'Raleway', var(--font-sans);
+  --font-serif: 'Merriweather', Georgia, "Times New Roman", serif;
+  /* Product-related tokens */
+  --page-max: 1180px;
+  --muted: #f1f1f3;
+  --placeholder: #dbdbdd;
+  --accent: #6a5ae0;
+  --text: #111827;
+  --product-min: 180px;
+}
+
+.store-body {
+  background: #fff;
+  /* Typography base */
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--ink);
+}
+
+/* Headings use the display family for character and presence */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.store-header {
+  position: relative;
+  z-index: 20;
+}
+
+/* Profile circle: neutral default; gradient on hover/open */
+.profile-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  /* gray-200 */
+  color: #111827;
+  /* gray-900 */
+  font-weight: 600;
+  font-size: 18px;
+  /* remove shadow to keep control flat against navbar */
+  box-shadow: none;
+  user-select: none;
+  border: 1px solid #d1d5db;
+  transition: background .25s ease, color .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.profile-circle:hover,
+.profile-toggle:hover .profile-circle,
+button[aria-expanded="true"] .profile-circle,
+.profile-toggle[aria-expanded="true"] .profile-circle,
+.dropdown.show .profile-circle {
+  background: linear-gradient(135deg, #00e5ff, #6a5ae0 55%, #c471ed);
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.9);
+  /* no shadow on hover; shadow handled separately when active/open */
+  box-shadow: none;
+}
+
+/* show shadow only when active (mousedown) or when dropdown is open */
+.profile-toggle:active .profile-circle,
+.profile-toggle:active,
+.dropdown.show>.profile-toggle,
+button[aria-expanded="true"].profile-toggle,
+.profile-toggle[aria-expanded="true"] .profile-circle,
+.dropdown.show .profile-circle {
+  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.12);
+}
+
+/* Profile toggle: group profile circle + chevron into a single clickable control
+   Give the whole control a subtle shadow and hover/active lift. */
+.profile-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .12rem .36rem;
+  /* small clickable hit area without changing circle size */
+  border-radius: .5rem;
+  transition: box-shadow .18s ease, transform .12s ease, background .18s ease;
+  /* make the toggle flat */
+  box-shadow: none;
+}
+
+.profile-toggle:focus {
+  outline: none;
+  /* no shadow on focus */
+  box-shadow: none;
+}
+
+.profile-toggle:hover {
+  /* do not show shadow on hover; only show on active/open */
+  box-shadow: none;
+}
+
+.dropdown.show>.profile-toggle,
+button[aria-expanded="true"].profile-toggle {
+  /* show shadow when dropdown is open */
+  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.12);
+}
+
+/* Ensure the chevron has a smooth transform and a small translate when opening */
+.profile-toggle .icon-chevron {
+  transition: transform .26s cubic-bezier(.2, .9, .2, 1), color .12s ease;
+  transform-origin: center;
+  font-size: 20px;
+  /* slightly larger for clarity */
+  color: var(--ink);
+  /* keep chevron black */
+}
+
+/* Enhanced open animation: rotate, lift and a tiny scale for a tactile feel */
+.dropdown.show .profile-toggle .icon-chevron,
+button[aria-expanded="true"].profile-toggle .icon-chevron,
+button[aria-expanded="true"] .profile-toggle .icon-chevron {
+  transform: rotate(180deg) translateY(-2px) scale(1.03);
+}
+
+/* Button that wraps the profile circle shouldn't shrink or hide */
+button.btn.bg-transparent .profile-circle {
+  display: inline-flex;
+}
+
+/* Dropdown alignment tweak */
+.dropdown-menu {
+  font-size: 0.95rem;
+}
+
+
+.store-main {
+  padding: 2rem 1rem;
+}
+
+/* Ensure background overlay sits behind content */
+.hero {
+  position: relative;
+}
+
+.hero::after {
+  z-index: 0;
+}
+
+.hero>* {
+  position: relative;
+  z-index: 1;
+}
+
+/* Constrain header inner content */
+.store-header .container-fluid {
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+/* Constrain main content */
+.store-main>.store-inner {
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+/* Optional narrower search bar */
+.store-header form[role="search"] {
+  max-width: 640px;
+}
+
+
+@media (max-width: 767px) {
+  .store-main {
+    padding: 1.25rem .75rem;
+  }
+
+  .profile-circle {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+  }
+}
+
+/* Utility: hide text overflow if needed */
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Buttons & inputs styling ---------- */
+/* White buttons with black border */
+.btn-outline-gradient-border {
+  background: #ffffff;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: .375rem;
+  transition: border-color .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+}
+
+.btn-outline-gradient-border:hover,
+.btn-outline-gradient-border:focus,
+.btn-outline-gradient-border:active {
+  background: #ffffff;
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+/* ---------- Reusable cyan buttons (solid, animated) ---------- */
+.store-btn {
+  display: inline-block;
+  padding: 12px 20px;
+  font-size: .95rem;
+  font-weight: 600;
+  background: var(--brand-cyan);
+  color: var(--brand-btn-ink);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: .375rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease, transform .12s cubic-bezier(.2, .9, .2, 1), box-shadow .12s ease;
+  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.12);
+}
+
+.store-btn:hover,
+.store-btn:focus {
+  background: var(--brand-cyan-hover);
+  color: var(--brand-btn-ink);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.14);
+  outline: none;
+}
+
+.store-btn:active {
+  background: var(--brand-cyan-active);
+  transform: translateY(-1px) scale(0.995);
+  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.12);
+}
+
+.store-btn:disabled,
+.store-btn[disabled],
+.store-btn[aria-disabled="true"] {
+  opacity: .85;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.store-btn-sm {
+  padding: .5rem .75rem;
+  font-size: .875rem;
+}
+
+.store-btn--danger {
+  background: var(--brand-danger);
+  color: var(--brand-danger-ink);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.store-btn--danger:hover,
+.store-btn--danger:focus {
+  background: var(--brand-danger-hover);
+  color: var(--brand-danger-ink);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(16, 24, 40, 0.14);
+  outline: none;
+}
+
+.store-btn--danger:active {
+  background: var(--brand-danger-active);
+  transform: translateY(-1px) scale(0.995);
+}
+
+.store-icon-btn.store-icon-btn--danger {
+  background: var(--brand-danger);
+  color: var(--brand-danger-ink);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: .5rem;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.12);
+}
+
+.store-icon-btn.store-icon-btn--danger:hover,
+.store-icon-btn.store-icon-btn--danger:focus {
+  background: var(--brand-danger-hover);
+  color: var(--brand-danger-ink);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(16, 24, 40, 0.14);
+  outline: none;
+}
+
+.store-icon-btn.store-icon-btn--danger:active {
+  background: var(--brand-danger-active);
+  transform: translateY(-1px) scale(0.995);
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.12);
+}
+
+.store-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  /* fallback color added in case variables are not available */
+  background: var(--brand-cyan, #087E99);
+  color: var(--brand-btn-ink, #f3f4f6);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: .5rem;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease, transform .12s cubic-bezier(.2, .9, .2, 1), box-shadow .12s ease;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.12);
+}
+
+.store-icon-btn:hover,
+.store-icon-btn:focus {
+  background: var(--brand-cyan-hover);
+  color: var(--brand-btn-ink);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(16, 24, 40, 0.14);
+  outline: none;
+}
+
+.store-icon-btn:active {
+  background: var(--brand-cyan-active);
+  transform: translateY(-1px) scale(0.995);
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.12);
+}
+
+.store-icon-btn:disabled,
+.store-icon-btn[disabled],
+.store-icon-btn[aria-disabled="true"] {
+  opacity: .85;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.store-icon-btn-sm {
+  width: 32px;
+  height: 32px;
+  font-size: .9rem;
+}
+
+/* Ensure icons inside inherit the button color */
+.store-icon-btn .material-icons,
+.store-icon-btn .icon {
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .store-btn,
+  .store-icon-btn {
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* (Categories / Sign Up handled by .nav-button: neutral default, gradient on hover) */
+
+/* Search bar (input) white with black border */
+.store-header .store-search .form-control {
+  background: #ffffff;
+  border: 1.5px solid var(--ink);
+  border-radius: .375rem 0 0 .375rem;
+  /* match input-group */
+  box-shadow: none;
+}
+
+.store-header .store-search .form-control:focus,
+.store-header .store-search .form-control:hover {
+  outline: none;
+  box-shadow: none;
+  border: 1.5px solid var(--brand-cyan);
+  background: #ffffff;
+}
+
+/* Make the input-group button align with border thickness */
+.store-header .store-search .btn {
+  border-width: 1.5px;
+}
+
+/* Search input/button hover/focus styles (solid accents) */
+.store-header .store-search .btn-search:hover,
+.store-header .store-search .btn-search:focus {
+  /* match the app's icon button visual (solid cyan) but do NOT lift the whole button
+     — keep the current icon-only pop animation below */
+  background: var(--brand-cyan-hover);
+  color: var(--brand-btn-ink);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 14px 28px rgba(16, 24, 40, 0.14);
+  transform: none;
+  /* prevent whole-button translate; icon will animate separately */
+  outline: none;
+}
+
+/* ---------- Borderless nav buttons with gradient underline ---------- */
+.nav-button {
+  background: transparent !important;
+  border: none !important;
+  color: var(--ink) !important;
+  padding: .45rem .75rem;
+  position: relative;
+  border-radius: .375rem;
+  text-decoration: none !important;
+}
+
+/* underline uses ::before so we can keep the caret on ::after for dropdown-toggle */
+.nav-button::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 4px;
+  /* lowered underline placement */
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+  border-radius: 2px;
+  transition: width .22s ease;
+}
+
+.nav-button:hover::before,
+.dropdown.show>.nav-button::before,
+button.nav-button[aria-expanded="true"]::before {
+  width: calc(100% - 24px);
+}
+
+/* custom caret for dropdown toggle (replace bootstrap caret)
+   We hide the CSS caret because we show a Material Icon chevron inline in the markup. */
+.nav-button.dropdown-toggle::after {
+  display: none !important;
+}
+
+/* Icon helpers (Material Icons text glyphs) */
+.icon {
+  display: inline-block;
+  font-size: 18px;
+  line-height: 18px;
+  vertical-align: middle;
+  color: var(--ink);
+}
+
+.icon-search {
+  font-size: 18px;
+  line-height: 18px;
+}
+
+.icon-chevron {
+  font-size: 16px;
+  line-height: 16px;
+  display: inline-block;
+  transform-origin: center;
+  transition: transform .18s ease;
+}
+
+/* Search button: keep btn-outline-gradient-border base, but adapt padding for icon */
+.btn-search {
+  /* align with .store-icon-btn visuals (icon-only solid button) */
+  padding: .375rem .6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: var(--brand-cyan);
+  color: var(--brand-btn-ink);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: .5rem;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease, box-shadow .12s ease;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.12);
+}
+
+/* Icon inside the search button: inherit color and keep icon-only animation */
+.btn-search .material-icons {
+  color: inherit;
+  transition: transform .12s ease;
+}
+
+/* Only the icon pops on hover/focus — keep the existing subtle pop animation */
+.btn-search:hover .material-icons,
+.btn-search:focus .material-icons {
+  transform: translateY(-1px);
+}
+
+/* Cart button: keep this small helper class and allow `.store-icon-btn` to provide visuals */
+.nav-cart {
+  /* rely on .store-icon-btn for size, background, radius, and shadow */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  /* allow .store-icon-btn :hover/:active rules to control color/transform */
+  transition: background .12s ease, color .12s ease, transform .12s cubic-bezier(.2, .9, .2, 1), box-shadow .12s ease;
+}
+
+/* Ensure cart icon itself appears white to match icon buttons */
+.nav-cart .material-icons {
+  color: var(--brand-btn-ink) !important;
+}
+
+/* Chevron rotates upwards when open */
+.dropdown.show .icon-chevron,
+button.nav-button[aria-expanded="true"] .icon-chevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown: show when Bootstrap/JS adds .show */
+.dropdown.show>.dropdown-menu {
+  display: block;
+}
+
+/* --- New expandable category panels --- */
+.dropdown-category {
+  position: relative;
+}
+
+.category-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* ensure there's reserved space on the right so icon doesn't overlap text */
+  padding-right: 1rem;
+}
+
+.category-toggle .category-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* allow truncation */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.category-toggle .expand-icon {
+  font-size: 18px;
+  line-height: 18px;
+  transition: transform .2s ease;
+  margin-left: auto;
+  color: var(--ink);
+}
+
+.dropdown-category.open .category-toggle .expand-icon {
+  transform: rotate(180deg);
+}
+
+/* Panel holding subcategories */
+.subcategory-panel {
+  padding: .25rem 0 .75rem;
+  /* top tighter, bottom comfortable */
+  border-top: 1px solid #e5e7eb;
+  animation: fadeSlide .18s ease;
+}
+
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subcategory-panel .dropdown-item {
+  padding-left: 2rem;
+  /* indent nested items */
+  font-size: 0.9rem;
+}
+
+.subcategory-panel .subcategory-all {
+  font-weight: 600;
+}
+
+/* Gradient underline reused for subcategory items */
+.subcategory-panel .dropdown-item::after {
+  bottom: 4px;
+}
+
+/* Dropdown items: gradient underline on hover */
+.dropdown-menu .dropdown-item {
+  position: relative;
+  padding-bottom: .85rem;
+}
+
+.dropdown-menu .dropdown-item::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  /* slightly lower so it sits nearer the item base */
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+  border-radius: 2px;
+  transition: width .22s ease;
+}
+
+.dropdown-menu .dropdown-item:hover::after {
+  width: calc(100% - 24px);
+}
+
+/* Increase spacing between categories in the mobile offcanvas menu */
+@media (max-width: 767px) {
+  #mobileNav .dropdown-category {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Make the category-toggle more touch-friendly */
+  #mobileNav .category-toggle {
+    padding: .75rem 1rem;
+    font-size: 1rem;
+  }
+
+  /* Slightly larger spacing for subcategory panel and items */
+  #mobileNav .subcategory-panel {
+    padding: .5rem 0 1rem;
+  }
+
+  #mobileNav .subcategory-panel .dropdown-item {
+    padding-left: 1.25rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+  }
+}
+
+/* Make the mobile offcanvas cover the full viewport height on small screens */
+#mobileNav.offcanvas {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Ensure the body scrolls internally if content exceeds viewport */
+#mobileNav .offcanvas-body {
+  max-height: calc(100vh - 56px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2rem;
+}
+
+/* Keep the dropdown visible when open and give a small visual offset */
+.dropdown.show>.dropdown-menu {
+  /* display:block is already set earlier; keep a small top offset for visual spacing */
+  margin-top: 0.25rem;
+}
+
+/* Ensure the menu has no extra margin by default (so hover offset is consistent) */
+.dropdown>.dropdown-menu {
+  margin-top: 0;
+}

@@ -1,0 +1,35 @@
+{% extends 'onlinestorefront/base_store.html' %}
+{% load static %}
+{% block title %}Search{% if query %}: {{ query }}{% endif %} | AuroraMart{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/product_card.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="index-hero">
+  <h1 class="display-6">Search Products</h1>
+  <p class="lead">Find items by name, description, category, or subcategory.</p>
+</div>
+
+<div class="container category-row">
+  <div class="row-header">
+    {% if query %}
+      <h3>Results for “{{ query }}”</h3>
+      <span class="text-muted">{{ total }} result{% if total != 1 %}s{% endif %}{% if total >= limit %} (showing first {{ limit }}){% endif %}</span>
+    {% else %}
+      <h3>Search</h3>
+      <span class="text-muted">Type at least 2 characters and press Enter.</span>
+    {% endif %}
+  </div>
+
+  {% if query and products %}
+  <div class="product-grid cols-4">
+    {% for product in products %}
+      {% include 'onlinestorefront/product_card.html' with product=product %}
+    {% endfor %}
+  </div>
+  {% elif query %}
+    <p>No products matched your search. Try another term.</p>
+  {% endif %}
+</div>
+{% endblock %}

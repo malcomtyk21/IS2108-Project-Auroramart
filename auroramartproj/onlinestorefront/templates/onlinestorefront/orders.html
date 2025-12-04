@@ -1,0 +1,51 @@
+{% extends 'onlinestorefront/base_store.html' %}
+{% load static %}
+
+{% block title %}My Orders • AuroraMart{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-3">My Orders</h1>
+
+  {% if orders %}
+  <div class="orders-list">
+    {% for o in orders %}
+    <a class="order-card-link" href="{% url 'onlinestorefront:order_detail' o.id %}">
+    <div class="order-card">
+      <div class="order-header d-flex flex-wrap align-items-center justify-content-between">
+        <div class="d-flex flex-column">
+          <div class="order-id">Order #{{ o.id }}</div>
+          <div class="order-date text-muted">{{ o.created_at|date:'M d, Y, g:i A' }}</div>
+        </div>
+        <div class="text-end">
+          <span class="badge order-status status-{{ o.status }}">{{ o.status|title }}</span>
+          <div class="order-total">${{ o.total_amount }}</div>
+          <div class="order-items-count text-muted">{{ o.item_count }} item{{ o.item_count|pluralize }}</div>
+        </div>
+      </div>
+      {% if o.items %}
+      <div class="order-items mt-2">
+        {% for it in o.items %}
+        <div class="order-item-row">
+          <div class="item-name">{{ it.product.product_name }}</div>
+          <div class="item-meta text-muted">x{{ it.quantity }} • ${{ it.price_at_purchase }}</div>
+        </div>
+        {% endfor %}
+        {% if o.remaining %}
+        <div class="more-items text-muted">and {{ o.remaining }} more…</div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-muted">You have no orders yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

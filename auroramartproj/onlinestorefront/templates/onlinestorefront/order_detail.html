@@ -1,0 +1,73 @@
+{% extends 'onlinestorefront/base_store.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.id }} • AuroraMart{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Order #{{ order.id }}</h1>
+    <a class="store-btn store-btn-sm" href="{% url 'onlinestorefront:orders' %}">Back to Orders</a>
+  </div>
+
+  <div class="order-detail-header d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+    <div>
+      <div class="text-muted">Placed on</div>
+      <div class="fw-semibold">{{ order.created_at|date:'M d, Y, g:i A' }}</div>
+    </div>
+    <div class="text-end">
+      <div><span class="badge order-status status-{{ order.status }}">{{ order.status|title }}</span></div>
+      <div class="order-total fs-5 mt-1">Total: ${{ order.total_amount }}</div>
+    </div>
+  </div>
+
+  <div class="row g-3 order-detail">
+    <div class="col-12 col-lg-8">
+      <div class="order-section">
+        <div class="section-title">Items</div>
+        <div class="order-items-full">
+          {% for it in items %}
+          <div class="order-item-row">
+            <div class="item-name">{{ it.name }}</div>
+            <div class="item-meta">x{{ it.qty }} × ${{ it.price }}</div>
+            <div class="item-total">${{ it.line_total }}</div>
+          </div>
+          {% endfor %}
+          <div class="order-sum">
+            <div class="label">Subtotal</div>
+            <div class="value">${{ subtotal }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="order-section">
+        <div class="section-title">Shipping</div>
+        <div class="order-meta">
+          <div>{{ order.shipping_address_line1 }}</div>
+          {% if order.shipping_address_line2 %}<div>{{ order.shipping_address_line2 }}</div>{% endif %}
+          <div>{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}</div>
+          <div>{{ order.shipping_country }}</div>
+          <div class="text-muted mt-1">Contact: {{ order.shipping_contact_number }}</div>
+        </div>
+      </div>
+      <div class="order-section mt-3">
+        <div class="section-title">Billing</div>
+        <div class="order-meta">
+          <div class="text-muted">Card</div>
+          <div>{{ order.card_brand }} •••• {{ order.card_last4 }}</div>
+          <div>Exp {{ order.expiry_month }}/{{ order.expiry_year }}</div>
+          <div class="text-muted mt-2">Cardholder</div>
+          <div>{{ order.cardholder_name }}</div>
+          <div class="text-muted mt-2">Billing Address</div>
+          <div class="saved-address">{{ order.billing_address }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

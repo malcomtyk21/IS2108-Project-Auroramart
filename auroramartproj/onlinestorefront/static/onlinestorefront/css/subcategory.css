@@ -1,0 +1,74 @@
+/* Styles specific to subcategory listing pages */
+
+.index-hero {
+  padding: 28px 12px 22px;
+  max-width: var(--page-max);
+  margin: 0 auto 18px;
+}
+
+.index-hero .display-6 {
+  margin-bottom: 0.25rem;
+}
+
+.index-hero .lead {
+  margin-bottom: .5rem;
+  color: #374151;
+}
+
+.subcategory-row {
+  max-width: var(--page-max);
+  margin: 28px auto;
+}
+
+/* Grid inherits general product card styling */
+
+/* Pagination (mirrors category pagination styling) */
+.subcategory-pagination {
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  padding: 0;
+  margin: 24px 0 0;
+  justify-content: center;
+}
+
+.subcategory-pagination .page-item { display: inline-block; }
+.subcategory-pagination .page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--ink);
+  text-decoration: none;
+  border: none;
+  box-shadow: 0 6px 18px rgba(16,24,40,0.08);
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  font-weight: 600;
+}
+.subcategory-pagination .page-link:hover,
+.subcategory-pagination .page-link:focus {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(16,24,40,0.12);
+  outline: none;
+}
+.subcategory-pagination .page-item.active .page-link,
+.subcategory-pagination .page-link[aria-current="page"] {
+  background: var(--brand-cyan);
+  color: var(--brand-btn-ink);
+  box-shadow: 0 18px 40px rgba(16,24,40,0.14);
+  transform: translateY(-3px);
+}
+.subcategory-pagination .page-item.disabled .page-link {
+  opacity: .55;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+  background: #f8fafc;
+}
+@media (max-width: 480px) {
+  .subcategory-pagination .page-link { min-width: 36px; height: 36px; padding: 0 10px; font-size: .9rem; }
+}

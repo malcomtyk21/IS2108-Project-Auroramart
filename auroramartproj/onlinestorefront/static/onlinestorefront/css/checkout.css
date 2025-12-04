@@ -1,0 +1,49 @@
+/* Styles specific to the checkout page */
+
+/* Use global brand cyan variables from `base_store.css` (with fallbacks) */
+
+/* Card tweaks */
+.checkout .card {
+  border-radius: 8px;
+}
+
+/* Order summary table */
+.checkout .table thead th {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.checkout .table tbody td {
+  vertical-align: middle;
+}
+
+.checkout .fw-semibold {
+  font-weight: 600;
+}
+
+/* Subtle shadow and spacing for cards */
+.checkout .card.shadow-sm {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* Responsive tweaks */
+@media (max-width: 991.98px) {
+  .checkout .card-header {
+    font-size: 0.95rem;
+  }
+}
+
+/* Small helper for masked card text */
+.checkout .masked-card {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Segoe UI Mono', monospace;
+  letter-spacing: 1px;
+}
+
+/* Align footer subtotal */
+.checkout .table tfoot th {
+  border-top: 1px solid #e9ecef;
+}
+
+/* Buttons */
+.checkout .btn-dark[disabled] {
+  opacity: 0.9;
+}

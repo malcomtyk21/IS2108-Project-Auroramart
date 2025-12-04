@@ -1,0 +1,117 @@
+{% extends 'onlinestorefront/base_store.html' %}
+{% load static %}
+{% block title %}Your Cart | AuroraMart{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/cart.css' %}">
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/product_card.css' %}">
+{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h1 class="h3 mb-4">Your Cart</h1>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'warning' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% if items %}
+    <div class="vstack gap-3">
+        {% for line in items %}
+        <div class="card shadow-sm cart-row-card">
+            <div class="card-body d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3">
+                <div class="form-check align-self-center me-2">
+                    <input class="form-check-input cart-select" type="checkbox" value="{{ line.item.id }}" name="selected_items"
+                        id="sel-{{ line.item.id }}" form="checkout-form"
+                        data-line-total="{{ line.line_total|floatformat:2 }}"
+                        {% if not line.is_active %}disabled aria-disabled="true"{% endif %}>
+                    <label class="form-check-label visually-hidden" for="sel-{{ line.item.id }}">Select {{ line.product.product_name }}</label>
+                </div>
+                <a href="{% url 'onlinestorefront:product_detail' line.product.id %}"
+                    class="cart-product-thumb bg-light d-flex align-items-center justify-content-center text-decoration-none text-dark"
+                    aria-label="View {{ line.product.product_name }}">
+                    {% if line.product.image %}
+                        <img src="{{ line.product.image.url }}" alt="{{ line.product.product_name }}" loading="lazy" class="cart-thumb-img">
+                    {% else %}
+                        <img src="{{ MEDIA_URL }}products/placeholder_kqmhtJz.jpg" alt="Placeholder for {{ line.product.product_name }}" loading="lazy" class="cart-thumb-img">
+                    {% endif %}
+                </a>
+                <div class="flex-grow-1 position-relative">
+                    <h5 class="mb-1">{{ line.product.product_name }}
+                        {% if not line.is_active %}<span class="badge bg-secondary align-middle ms-1">Inactive</span>{% endif %}
+                    </h5>
+                    <a href="{% url 'onlinestorefront:product_detail' line.product.id %}" class="stretched-link" aria-label="View {{ line.product.product_name }}"></a>
+                    <p class="text-muted small mb-1">{{ line.product.product_description|default:'No description.' }}
+                    </p>
+                    <p class="small mb-1">Remaining: {{ line.product.quantity_on_hand }}{% if not line.is_active %} (Unavailable for checkout){% endif %}</p>
+                    <p class="fw-semibold">${{ line.line_total|floatformat:2 }}</p>
+                </div>
+                <div class="d-flex flex-column align-items-end ms-md-auto" style="min-width:180px;">
+                    <form method="post" action="{% url 'onlinestorefront:cart_item_update' line.item.id %}"
+                        class="d-flex align-items-center mb-2" style="gap:4px; width:100%;">
+                        {% csrf_token %}
+                        <!-- Hidden default submit so pressing Enter submits without an op parameter -->
+                        <button type="submit" class="visually-hidden" tabindex="-1" aria-hidden="true"></button>
+                        <button type="submit" name="op" value="dec" class="store-icon-btn store-icon-btn-sm"
+                            aria-label="Decrease quantity" title="Decrease quantity">
+                            <span class="material-icons">remove</span>
+                        </button>
+                        <input type="number" name="quantity" value="{{ line.qty }}" min="1"
+                            max="{{ line.product.quantity_on_hand }}" class="form-control form-control-sm"
+                            style="width:70px;"
+                            onkeydown="if(event.key==='Enter'){event.preventDefault(); this.form.requestSubmit();}" />
+                        <button type="submit" name="op" value="inc" class="store-icon-btn store-icon-btn-sm"
+                            aria-label="Increase quantity" title="Increase quantity">
+                            <span class="material-icons">add</span>
+                        </button>
+                        <button type="submit" formaction="{% url 'onlinestorefront:cart_item_remove' line.item.id %}" class="store-icon-btn store-icon-btn-sm store-icon-btn--danger ms-auto" aria-label="Remove item" title="Remove item">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% if line.recommendations %}
+        <div class="complete-set d-none" id="complete-set-{{ line.item.id }}">
+            <div class="card border-info mt-2 mb-3">
+                <div class="card-body py-2">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong class="small text-uppercase mb-0">Complete the set</strong>
+                    </div>
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3 complete-set-grid">
+                        {% for rp in line.recommendations %}
+                        <div class="col d-flex">
+                            {% include 'onlinestorefront/product_card.html' with product=rp %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="mt-4 d-flex justify-content-between flex-column flex-md-row align-items-md-center">
+        <div class="mb-3 mb-md-0">
+            <button type="button" class="store-btn store-btn-sm me-2"
+                onclick="document.querySelectorAll('input[name=selected_items][form=checkout-form]').forEach(cb=>cb.checked=true);" aria-label="Select all">Select All</button>
+            <button type="button" class="store-btn store-btn-sm"
+                onclick="document.querySelectorAll('input[name=selected_items][form=checkout-form]').forEach(cb=>cb.checked=false);" aria-label="Clear all">Clear All</button>
+        </div>
+        <div class="text-end">
+            <p class="fs-5 mb-2">Selected subtotal: $<span id="selected-subtotal">0.00</span></p>
+            <div id="selected-subtotal-aria" class="visually-hidden" aria-live="polite">$0.00</div>
+                <form id="checkout-form" method="post" action="{% url 'onlinestorefront:checkout' %}">
+                {% csrf_token %}
+                <button class="store-btn" type="submit">Checkout Selected</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+</div>
+<script src="{% static 'onlinestorefront/js/cart.js' %}"></script>
+
+{% endblock %}

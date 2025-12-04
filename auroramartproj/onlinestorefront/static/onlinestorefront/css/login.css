@@ -1,0 +1,43 @@
+.login-panel {
+  width: 100%;
+  /* Increased width to provide a more spacious form layout */
+  max-width: 640px;
+  border-radius: .75rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+.login-panel h2 {
+  letter-spacing: -0.01em;
+}
+
+/* Improve spacing of form fields rendered by crispy forms */
+.login-panel .form-control {
+  border-radius: .5rem;
+  padding: .65rem .75rem;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.login-panel .form-floating .form-control {
+  height: auto;
+  padding-top: .8rem;
+  padding-bottom: .8rem;
+}
+
+.login-panel .form-text {
+  color: #6b7280; /* gray-500 */
+}
+
+/* Make the submit button match the store brand, but full width */
+.login-panel .store-btn {
+  width: 100%;
+  padding: .65rem 1rem;
+}
+
+@media (max-width: 576px) {
+  .login-panel {
+    margin: 1rem;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+  }
+}

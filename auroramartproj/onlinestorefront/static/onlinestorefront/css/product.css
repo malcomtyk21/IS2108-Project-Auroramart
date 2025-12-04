@@ -1,0 +1,290 @@
+/* Product detail page styles */
+:root {
+  --pd-gap: 42px;
+  --pd-max: 1180px;
+  --border: #d1d5db;
+}
+
+.product-detail-wrapper {
+  max-width: var(--pd-max);
+  margin: 0 auto;
+  padding: 12px 12px 48px;
+}
+
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: var(--pd-gap);
+  align-items: flex-start;
+}
+
+.product-media {
+  background: #e5e7eb; /* grey placeholder */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #4b5563;
+  border: 1px solid var(--border);
+  width: 100%;
+  aspect-ratio: 1 / 1; /* keep media square (1:1) */
+  overflow: hidden;
+}
+
+/* Ensure product images are fully visible inside the square media box */
+.product-detail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Lightbox overlay styles */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+}
+.lightbox-overlay.open { display: flex; }
+.lightbox-content { max-width: 92vw; max-height: 92vh; }
+.lightbox-content img { width: auto; height: auto; max-width: 100%; max-height: 100%; display: block; border-radius: 6px; }
+.lightbox-close {
+  position: absolute; top: 16px; right: 18px; color: #fff; background: transparent; border: none; font-size: 28px; cursor: pointer;
+}
+
+/* indicate zoomable image */
+.product-detail-image { cursor: zoom-in; }
+
+.product-info h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--ink);
+}
+
+.product-info p.description {
+  font-size: 0.95rem;
+  color: #374151;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.product-meta-lines {
+  margin-bottom: 1.75rem;
+}
+
+.product-meta-lines .line-label {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.product-meta-lines .line-value {
+  color: #374151;
+}
+
+/* Action buttons */
+.product-actions {
+  display: flex;
+  gap: 28px;
+}
+
+.product-actions .btn-action {
+  min-width: 160px;
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 2px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 4px;
+  position: relative;
+  transition: background .25s ease, color .25s ease, border-color .25s ease, transform .18s cubic-bezier(.2,.9,.2,1), box-shadow .18s ease;
+  will-change: transform, box-shadow;
+}
+
+.product-actions .btn-action:hover,
+.product-actions .btn-action:focus {
+  background: linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3)) border-box;
+  border: 2px solid transparent;
+  color: var(--ink);
+  /* lift & shadow */
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 30px rgba(16,24,40,0.12);
+}
+
+.product-actions .btn-action:active {
+  transform: translateY(-2px) scale(0.995);
+  box-shadow: 0 6px 18px rgba(16,24,40,0.12);
+}
+
+/* Keyboard focus visible state */
+.product-actions .btn-action:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(106,90,224,0.12), 0 12px 30px rgba(16,24,40,0.08);
+}
+
+/* Add-to-cart button: use app-wide .store-btn for consistent visuals */
+.product-actions .store-btn {
+  /* keep size/typography from .btn-action where relevant; override visuals */
+  min-width: 160px;
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: var(--brand-cyan);
+  color: var(--brand-btn-ink);
+  border: 1px solid rgba(0,0,0,0.06);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease, transform .12s cubic-bezier(.2, .9, .2, 1), box-shadow .12s ease;
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 8px 22px rgba(2, 6, 23, 0.16);
+}
+
+.product-actions .store-btn:focus {
+  outline: none;
+}
+
+.product-actions .store-btn:focus-visible {
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.20);
+  color: var(--brand-btn-ink, #f3f4f6);
+}
+
+.product-actions .store-btn:hover,
+.product-actions .store-btn:focus {
+  background: var(--brand-cyan-hover);
+  color: var(--brand-btn-ink);
+  border: 1px solid rgba(0,0,0,0.07);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.18);
+}
+
+.product-actions .store-btn:active {
+  background: var(--brand-cyan-active);
+  color: var(--brand-btn-ink);
+  transform: translateY(-1px) scale(0.995);
+  box-shadow: 0 8px 22px rgba(2, 6, 23, 0.14);
+}
+
+/* Small variant for consistency with settings.css */
+.product-actions .store-btn.btn-sm,
+.product-actions .store-btn-sm {
+  padding: .25rem .5rem;
+  font-size: .875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-actions .store-btn,
+  .product-actions .btn-action {
+    transition: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Recommended products section (horizontal card row) */
+.recommended-products {
+  margin-top: 56px;
+}
+
+.recommended-products h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 20px;
+  color: var(--ink);
+}
+
+.recommended-products .product-row {
+  display: flex;
+  gap: 20px;
+  padding: 8px 6px 12px;
+  /* Make recommended products horizontally scrollable on small screens
+     and snap to cards for a touch-friendly carousel-like experience. */
+  flex-wrap: nowrap;
+  align-items: stretch;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.recommended-products .product-row:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 2px;
+}
+
+.recommended-products .product-card {
+  flex: 0 0 200px; /* fixed card width in the scroll strip */
+  min-width: 160px;
+  scroll-snap-align: start;
+  padding-bottom: 60px; /* keep consistent spacing under cards */
+}
+
+/* recommended cards use the product-card component's aspect-ratio to remain square */
+
+@media (max-width: 640px) {
+  .recommended-products {
+    margin-top: 48px;
+  }
+  .recommended-products .product-row {
+    gap: 16px;
+  }
+  .recommended-products .product-card {
+    flex: 0 0 160px;
+    min-width: 120px;
+  }
+  /* smaller recommended cards remain square via aspect-ratio */
+}
+
+@media (max-width: 480px) {
+  .recommended-products .product-row {
+    gap: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .recommended-products .product-card {
+    flex: 0 0 140px;
+    min-width: 120px;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-media {
+    /* aspect-ratio keeps it square; no fixed height needed on narrow screens */
+    aspect-ratio: 1 / 1;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-info h1 { font-size: 1.5rem; }
+  .product-info p.description { font-size: 0.95rem; }
+  .product-actions { gap: 14px; }
+  .product-actions .store-btn { min-width: 140px; }
+}
+
+@media (max-width: 640px) {
+  .product-detail-wrapper {
+    padding: 12px 8px 40px;
+  }
+
+  .product-actions {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .product-media {
+    aspect-ratio: 1 / 1;
+  }
+}

@@ -1,0 +1,53 @@
+{% extends 'onlinestorefront/base_store.html' %}
+{% load static %}
+{% block title %}{% if product %}{{ product.product_name }} | AuroraMart{% else %}Product Not Found | AuroraMart{% endif %}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/product.css' %}">
+<link rel="stylesheet" href="{% static 'onlinestorefront/css/product_card.css' %}">
+{% endblock %}
+{% block content %}
+<div class="product-detail-wrapper">
+  {% if product %}
+  <div class="product-detail-grid">
+    <div class="product-media">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.product_name }}" class="product-detail-image" data-full="{{ product.image.url }}">
+      {% else %}
+        <img src="{{ MEDIA_URL }}products/placeholder_kqmhtJz.jpg" alt="Placeholder for {{ product.product_name }}" class="product-detail-image" data-full="{{ MEDIA_URL }}products/placeholder_kqmhtJz.jpg">
+      {% endif %}
+    </div>
+    <div class="product-info">
+      <h1>{{ product.product_name }}</h1>
+      <p class="description">{{ product.product_description }}</p>
+      <div class="product-meta-lines">
+        <div class="mb-2"><span class="line-label">Price:</span> <span class="line-value">${{ product.unit_price|floatformat:2 }}</span></div>
+        <div class="mb-2"><span class="line-label">Quantity Remaining:</span> <span class="line-value">{{ product.quantity_on_hand }}</span></div>
+      </div>
+      <div class="product-actions">
+        <form method="post" action="{% url 'onlinestorefront:cart_add' product.id %}" class="d-inline">
+          {% csrf_token %}
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="store-btn">Add to Cart</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% if recommended_products %}
+      <section class="recommended-products" role="region" aria-label="Frequently Bought Together">
+        <h3>Frequently Bought Together</h3>
+        <div class="product-row" tabindex="0" aria-label="Recommended products horizontally scrollable">
+          {% for p in recommended_products|slice:":5" %}
+            {% include 'onlinestorefront/product_card.html' with product=p %}
+          {% endfor %}
+        </div>
+      </section>
+  {% endif %}
+  {% else %}
+  <p>Product not found.</p>
+  {% endif %}
+</div>
+{% endblock %}
+{% block extra_scripts %}
+{{ block.super }}
+<script src="{% static 'onlinestorefront/js/lightbox.js' %}"></script>
+{% endblock %}

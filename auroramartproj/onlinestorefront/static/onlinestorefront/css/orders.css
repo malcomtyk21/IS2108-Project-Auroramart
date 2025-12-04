@@ -1,0 +1,122 @@
+.orders-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px
+}
+
+.order-card-link {
+	display: block;
+	text-decoration: none;
+	color: inherit
+}
+
+.order-card {
+	border: 1px solid #e6e7ea;
+	border-radius: 10px;
+	background: #fff;
+	padding: 14px
+}
+
+.order-card-link:hover .order-card {
+	box-shadow: 0 6px 20px rgba(0, 0, 0, .06);
+	border-color: #d9dae0
+}
+
+.order-header .order-id {
+	font-weight: 600
+}
+
+.order-header .order-total {
+	font-weight: 600;
+	color: #111
+}
+
+.order-item-row {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 6px 0;
+	border-top: 1px dashed #eee
+}
+
+.order-item-row:first-child {
+	border-top: none
+}
+
+.more-items {
+	font-size: .9rem
+}
+
+/* Status badges */
+.badge.order-status {
+	font-weight: 600;
+	text-transform: capitalize
+}
+
+.status-pending {
+	background: #fff3cd;
+	color: #664d03;
+	border: 1px solid #ffe69c
+}
+
+.status-shipped {
+	background: #cff4fc;
+	color: #055160;
+	border: 1px solid #9eeaf9
+}
+
+.status-delivered {
+	background: #d1e7dd;
+	color: #0f5132;
+	border: 1px solid #a3cfbb
+}
+
+.status-cancelled {
+	background: #f8d7da;
+	color: #842029;
+	border: 1px solid #f1aeb5
+}
+
+/* Detail page */
+.order-detail .order-section {
+	border: 1px solid #e6e7ea;
+	border-radius: 10px;
+	background: #fff;
+	padding: 14px
+}
+
+.order-detail .section-title {
+	font-weight: 600;
+	margin-bottom: 6px
+}
+
+.order-detail .order-items-full .order-item-row {
+	align-items: center
+}
+
+.order-detail .order-items-full .item-name {
+	flex: 1
+}
+
+.order-detail .order-items-full .item-meta {
+	color: #6b7280
+}
+
+.order-detail .order-items-full .item-total {
+	min-width: 80px;
+	text-align: right;
+	font-weight: 600
+}
+
+.order-detail .order-sum {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 8px;
+	border-top: 1px solid #eee;
+	padding-top: 8px;
+	font-weight: 600
+}
+
+.order-detail .order-meta {
+	color: #374151
+}

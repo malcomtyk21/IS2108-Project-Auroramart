@@ -1,0 +1,26 @@
+{% extends 'onlinestorefront/base_store.html' %}
+
+{% block title %}Forbidden - AuroraMart{% endblock %}
+
+{% block extra_head %}
+<style>
+  .forbidden-hero { max-width:720px; margin:48px auto; text-align:center; padding:32px; }
+  .forbidden-hero h1{ font-size:36px; margin-bottom:12px }
+  .forbidden-hero p{ color:#6b7280; margin-bottom:18px }
+  .forbidden-hero .btn{ margin:6px }
+</style>
+{% endblock %}
+
+{% block content %}
+<main>
+  <div class="forbidden-hero">
+    <h1>Forbidden</h1>
+    <p>You don't have permission to access the storefront with this account.</p>
+    <p class="text-muted">If you are an administrator or staff member, please use the admin panel instead.</p>
+    <div>
+      <a class="btn btn-outline-secondary" href="{% url 'index' %}">Back to Home</a>
+      <a class="btn btn-primary" href="/adminpanel/">Go to Admin Panel</a>
+    </div>
+  </div>
+</main>
+{% endblock %}
