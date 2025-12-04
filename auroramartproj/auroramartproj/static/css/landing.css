@@ -1,0 +1,203 @@
+/* MUST IMPORT FIRST */
+@import url("background.css");
+
+:root {
+    --accent1: #00e5ff;
+    --accent2: #6a5ae0;
+    --accent3: #c471ed;
+    --muted: #6b7280;
+    --card-bg: #ffffff;
+    --page-bg: #f3f4f6;
+    --shadow-lg: 0 30px 60px rgba(2, 6, 23, 0.12), 0 8px 20px rgba(2, 6, 23, 0.06);
+}
+
+/* Bootstrap-aware landing page styles */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: Inter, Segoe UI, Arial, sans-serif;
+    background: var(--page-bg)
+}
+
+/* Navbar underline like sample */
+.navbar .nav-link {
+    position: relative;
+    color: #111827
+}
+
+.navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+    border-radius: 2px;
+    transition: width .28s ease
+}
+
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after {
+    width: 100%
+}
+
+.landing-card {
+    background: var(--card-bg);
+    border: none
+}
+
+.landing-card .col-md-7 {
+    padding: 48px
+}
+
+/* Hero visual: layered organic shapes built with radial/linear gradients */
+.hero-visual {
+    height: 100%;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.16) 0 10%, transparent 20%),
+        radial-gradient(circle at 80% 10%, rgba(106, 90, 224, 0.18) 0 12%, transparent 28%),
+        radial-gradient(circle at 50% 80%, rgba(196, 113, 237, 0.12) 0 18%, transparent 36%),
+        linear-gradient(135deg, rgba(0, 229, 255, 0.18) 0%, rgba(106, 90, 224, 0.16) 40%, rgba(196, 113, 237, 0.14) 100%);
+    background-blend-mode: screen, screen, screen, normal;
+    position: relative;
+}
+
+/* add soft white curvy cutout using pseudo element */
+.hero-visual::before {
+    content: '';
+    position: absolute;
+    left: -10%;
+    top: 10%;
+    width: 120%;
+    height: 70%;
+    background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95) 40%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0) 100%);
+    transform: rotate(-12deg);
+    filter: blur(10px);
+    opacity: 1;
+    border-radius: 40%;
+    mix-blend-mode: normal;
+}
+
+/* subtle rounded card inner spacing */
+.landing-card .display-5 {
+    color: #0f1724
+}
+
+.landing-card p {
+    color: var(--muted)
+}
+
+/* CTA styles adjust */
+.btn-primary {
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    border: 0
+}
+
+.btn-primary:hover {
+    filter: brightness(.95)
+}
+
+/* hero background moved to hero-background.css and imported at the top */
+
+.hero-title {
+    color: #071033
+}
+
+/* navbar inline links */
+.nav-link-inline {
+    color: #071033;
+    text-decoration: none;
+    position: relative;
+    padding-bottom: 6px
+}
+
+.nav-link-inline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent3));
+    border-radius: 2px;
+    transition: width .28s ease
+}
+
+.nav-link-inline:hover::after {
+    width: 100%
+}
+
+/* Cards shown in the center of the hero (used instead of the navbar) */
+.card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.hero-card {
+    border-radius: 14px;
+    /* solid white to prevent hero gradient showing through */
+    background: #ffffff;
+    /* ensure the card sits above the hero pseudo-element overlay */
+    position: relative;
+    z-index: 2;
+    /* subtle outline and default shadow for card elevation */
+    border: 1px solid rgba(15,23,52,0.06);
+    box-shadow: 0 8px 20px rgba(2,6,23,0.04);
+    transition: transform .22s ease, box-shadow .22s ease;
+    min-height: 140px;
+}
+
+.hero-card:hover {
+    transform: translateY(-8px);
+    /* stronger shadow on hover for a pronounced lift */
+    box-shadow: var(--shadow-lg);
+}
+
+/* A slightly stronger look on larger screens */
+@media (min-width: 768px) {
+    .hero-card {
+        min-height: 160px;
+    }
+}
+
+/* Logo above the heading */
+.hero-logo {
+    display: block;
+    text-align: center;
+}
+.hero-logo img {
+    display: inline-block;
+    height: 120px;
+    width: auto;
+    max-width: 90%;
+}
+
+@media (max-width: 767px) {
+    .hero-logo img {
+        height: 96px;
+    }
+}
+
+@media (max-width:767px) {
+    .hero-title {
+        font-size: 34px
+    }
+
+    .hero::after {
+        filter: blur(8px)
+    }
+}
+
+/* Responsive tweaks */
+@media (max-width:767px) {
+    .landing-card .col-md-7 {
+        padding: 28px
+    }
+
+    .hero-visual {
+        height: 220px
+    }
+}
