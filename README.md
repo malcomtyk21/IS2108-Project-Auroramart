@@ -1,6 +1,6 @@
 # IS2108 Full-stack Software Engineering for AI Solutions I <br> <br> Pair Project <br> <br> Group 26
 ## Group Members:
-### Boris Cougar Ong A0301612Y <br> Malcom Tan Yon Kiak A0308355A
+### Boris Cougar Ong <br> Malcom Tan Yon Kiak 
 
 # Prerequisites
 **Please ensure you have Python 3.13 or above installed in your machine**
