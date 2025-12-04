@@ -1,0 +1,221 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Orders - AuroraMart Admin{% endblock %}
+
+{% block navbar %}
+{% include 'adminpanel/navbar.html' %}
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+<style>
+    .status {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .status.pending {
+        background: rgba(255, 165, 0, .15);
+        color: #d97706;
+    }
+
+    .status.shipped {
+        background: rgba(59, 130, 246, .15);
+        color: #2563eb;
+    }
+
+    .status.delivered {
+        background: rgba(16, 185, 129, .15);
+        color: #059669;
+    }
+
+    .status.cancelled {
+        background: rgba(239, 68, 68, .15);
+        color: #dc2626;
+    }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="header-container">
+    <div class="header">
+        <div class="header-left">
+            <h1>Orders</h1>
+            <p style="padding-bottom:5px;">
+                {% if is_paginated %}{{ page_obj.paginator.count }}{% else %}{{ orders|length }}{% endif %} Orders found
+            </p>
+        </div>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <script>alert("{{ message|escapejs }}");</script>
+    {% endfor %}
+    {% endif %}
+
+    <form method="GET" id="page-size-form" class="filter-section">
+        <div class="filter-first-row">
+            <div class="filter-left">
+                <input type="text" name="search" placeholder="Search orders..." value="{{ request.GET.search }}">
+                <button type="submit"><img width="14" height="14"
+                        src="https://img.icons8.com/?size=100&id=7eX13e1GI7bn&format=png&color=000000" alt="search" />
+                    Search</button>
+            </div>
+            <div class="filter-right">
+                <label for="page_size"> Show:</label>
+                <select name="page_size" id="page_size" onchange="document.getElementById('page-size-form').submit();">
+                    <option value="5" {% if request.GET.page_size == "5" %}selected{% endif %}>5</option>
+                    <option value="10" {% if request.GET.page_size == "10" or not request.GET.page_size %}selected{% endif %}>10</option>
+                    <option value="25" {% if request.GET.page_size == "25" %}selected{% endif %}>25</option>
+                    <option value="50" {% if request.GET.page_size == "50" %}selected{% endif %}>50</option>
+                </select> entries per page
+            </div>
+        </div>
+        <div class="filter-second-row">
+            <div class="date-range">
+                <label>Total Price:</label>
+                <input type="number" step="0.01" name="min_total" id="min_total" placeholder="0.00" value="{{ request.GET.min_total }}">
+                <label>to</label>
+                <input type="number" step="0.01" name="max_total" id="max_total" placeholder="9999.99" value="{{ request.GET.max_total }}">
+            </div>
+            <div class="date-range">
+                <label>Date From:</label>
+                <input type="date" name="created_from" id="created_from" value="{{ request.GET.created_from }}">
+                <label>to</label>
+                <input type="date" name="created_to" id="created_to" value="{{ request.GET.created_to }}">
+            </div>
+            <button type="submit">Apply Filters</button>
+            <a href="?{% if request.GET.page_size %}page_size={{ request.GET.page_size }}{% endif %}">
+                <button type="button">Clear All</button>
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="container">
+    <div class="inner-nav">
+        <a href="{% url 'order' %}" class="nav-tab {% if selected_status == 'all' %}active{% endif %}">All ({{ counts.all }})</a>
+        <a href="{% url 'order_delivered' %}" class="nav-tab {% if selected_status == 'delivered' %}active{% endif %}">Delivered ({{ counts.delivered }})</a>
+        <a href="{% url 'order_shipped' %}" class="nav-tab {% if selected_status == 'shipped' %}active{% endif %}">Shipped ({{ counts.shipped }})</a>
+        <a href="{% url 'order_pending' %}"
+            class="nav-tab {% if selected_status == 'pending' %}active{% endif %}">Pending ({{ counts.pending }})</a>
+        <a href="{% url 'order_cancelled' %}"
+            class="nav-tab {% if selected_status == 'cancelled' %}active{% endif %}">Cancelled ({{ counts.cancelled }})</a>
+    </div>
+
+    <div class="table-container">
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th>Order ID
+                        <a href="?{{ request.GET.urlencode|default:'' }}&sort=id&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if request.GET.sort == 'id' %}
+                            {% if request.GET.dir == 'asc' %} <img width="10" height="10"
+                                src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up" /> {% else %} <img width="10"
+                                height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down" /> {% endif %}
+                            {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png"
+                                alt="generic-sorting" />
+                            {% endif %}</a>
+                    </th>
+                    <th>Customer
+                        <a href="?{{ request.GET.urlencode|default:'' }}&sort=customer.user&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if request.GET.sort == 'customer.user' %}
+                            {% if request.GET.dir == 'asc' %} <img width="10" height="10"
+                                src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up" /> {% else %} <img width="10"
+                                height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down" /> {% endif %}
+                            {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png"
+                                alt="generic-sorting" />
+                            {% endif %}</a>
+                    </th>
+                    <th>Total
+                        <a href="?{{ request.GET.urlencode|default:'' }}&sort=total_amount&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if request.GET.sort == 'total_amount' %}
+                            {% if request.GET.dir == 'asc' %} <img width="10" height="10"
+                                src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up" /> {% else %} <img width="10"
+                                height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down" /> {% endif %}
+                            {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png"
+                                alt="generic-sorting" />
+                            {% endif %}</a>
+                    </th>
+                    <th>Status
+                    </th>
+                    <th>Created At
+                        <a href="?{{ request.GET.urlencode|default:'' }}&sort=created_at&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                            {% if request.GET.sort == 'created_at' %}
+                            {% if request.GET.dir == 'asc' %} <img width="10" height="10"
+                                src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up" /> {% else %} <img width="10"
+                                height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down" /> {% endif %}
+                            {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png"
+                                alt="generic-sorting" />
+                            {% endif %}</a>
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>
+                        {% if order.customer.user.get_full_name %}
+                        {{ order.customer.user.get_full_name }}
+                        {% else %}
+                        {{ order.customer.user.username }}
+                        {% endif %}
+                    </td>
+                    <td>${{ order.total_amount }}</td>
+                    <td><span class="status {{ order.status }}">{{ order.status }}</span></td>
+                    <td>{{ order.created_at|date:"M. d, Y, g:i a" }}</td>
+                    <td>
+                        <button class="btn-add" type="button"><a href="{% url 'order_view' order.pk %}"><span class="material-symbols-outlined">assignment</span></a></button>
+                        <button class="btn-add" type="button"><a href="{% url 'order_edit' order.pk %}"><span class="material-symbols-outlined">edit</span></a></button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No orders found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if is_paginated %}
+        <div class="pager">
+            <div class="pagination-left">
+                Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
+            </div>
+            <div class="pagination-right">
+                {% if page_obj.has_previous %}
+                <a class="pager-arrow"
+                    href="?{{ request.GET.urlencode|default:'' }}&page={{ page_obj.previous_page_number }}">&lt;</a>
+                {% else %}
+                <span class="pager-arrow disabled">&lt;</span>
+                {% endif %}
+
+                {% for item in compact_page_range %}
+                {% if item == '...' %}
+                <span class="pager-ellipsis">...</span>
+                {% else %}
+                {% if item == page_obj.number %}
+                <span class="pager-page active">{{ item }}</span>
+                {% else %}
+                <a class="pager-page" href="?{{ request.GET.urlencode|default:'' }}&page={{ item }}">{{ item }}</a>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <a class="pager-arrow"
+                    href="?{{ request.GET.urlencode|default:'' }}&page={{ page_obj.next_page_number }}">&gt;</a>
+                {% else %}
+                <span class="pager-arrow disabled">&gt;</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

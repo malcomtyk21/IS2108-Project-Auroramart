@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{% block title %}AuroraMart{% endblock %}</title>
+	<link rel="stylesheet" href="{% static 'adminpanel/css/styles.css' %}">
+	<!-- Favicon -->
+	<link rel="icon" href="{% static 'images/favicon.ico' %}">
+	{% block extra_head %}{% endblock %}
+</head>
+
+<body>
+	<!-- Navbar -->
+	<div class="navbar">
+        {% block navbar %}
+            {% include 'adminpanel/navbar.html' %}
+        {% endblock %}
+    </div>
+
+	<main>
+		{% block main_content %}{% endblock %}
+	</main>
+
+	<!-- Footer -->
+	<footer class="footer">
+		{% block footer %}
+			<p>&copy; {% now "Y" %} AuroraMart. All rights reserved.</p>
+		{% endblock %}
+	</footer>
+</body>
+
+</html>

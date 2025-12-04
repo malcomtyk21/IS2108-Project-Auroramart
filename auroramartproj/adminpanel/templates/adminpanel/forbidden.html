@@ -1,0 +1,89 @@
+{% extends 'adminpanel/base_admin.html' %}
+
+{% block title %}Forbidden - AuroraMart Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+    .hero {
+        width: 100%;
+        max-width: 720px;
+        text-align: center;
+        padding: 40px 32px;
+    }
+
+    .hero h1 {
+        margin: 0 0 12px;
+        font-size: 40px;
+        line-height: 1.2;
+    }
+
+    .hero p {
+        margin: 0 0 24px;
+        color: #6b7280;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 8px;
+        background: #6a5ae0;
+        border: 1px solid #6a5ae0;
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .btn:hover {
+        background: #5a49d4;
+    }
+
+    body {
+        background: linear-gradient(90deg, #00e5ff, #6a5ae0, #c471ed);
+    }
+
+    main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+    }
+
+    main {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, #f7fbfc 0%, #f3f6fb 100%);
+    }
+
+    main::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.20) 0 10%, transparent 20%),
+            radial-gradient(circle at 80% 10%, rgba(106, 90, 224, 0.22) 0 12%, transparent 28%),
+            radial-gradient(circle at 50% 80%, rgba(196, 113, 237, 0.14) 0 18%, transparent 36%),
+            linear-gradient(135deg, rgba(0, 229, 255, 0.12) 0%, rgba(106, 90, 224, 0.10) 40%, rgba(196, 113, 237, 0.08) 100%);
+        background-blend-mode: screen, screen, screen, normal;
+        opacity: 1;
+        pointer-events: none;
+        filter: blur(6px);
+    }
+
+    @media (max-width:767px) {
+        main::after {
+            filter: blur(8px);
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block navbar %}{% endblock %}
+
+{% block main_content %}
+  <div class="hero">
+    <h1>Forbidden</h1>
+    <p>You don’t have permission to access this page.</p>
+    <a class="btn" href="{% url 'index' %}">Back to Home</a>
+  </div>
+{% endblock %}

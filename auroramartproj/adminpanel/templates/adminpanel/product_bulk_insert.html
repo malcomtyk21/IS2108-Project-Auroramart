@@ -1,0 +1,42 @@
+{% extends 'adminpanel/base_admin.html' %}
+
+{% block title %}Bulk Insert Products - AuroraMart Admin{% endblock %}
+
+{% block extra_head %}
+<style>
+main {
+    flex: 1;             
+    display: flex;            
+    align-items: center;    
+    justify-content: center;  
+    padding: 32px;              
+}
+</style>
+{% endblock %}
+
+{% block navbar %}
+{% include 'adminpanel/navbar.html' %}
+{% endblock %}
+
+{% block main_content %}
+
+<div class="container">
+    <div class="header" style="padding: 20px 0px 20px 0px;">
+            <div class="header-left">
+                <h2 style="padding: 20px 0px 20px 0px;">Bulk Insert Products</h2>
+            </div>
+        </div>
+    {% if message %}
+        <p class="error-message" style="padding: 20px 0px 20px 0px; color: blue;">{{ message }}</p>
+    {% endif %}
+    <p style="padding: 20px 0px 20px 0px;">Please upload a CSV file to bulk insert products.</p>
+    <p style="padding: 20px 0px 20px 0px;">The CSV headers should contain headers: <br> SKU Code, Product Name, Product Description, Product Category, Product Subcategory', Quantity on Hand, Unit Price</p>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div style="padding: 20px 0px 40px 0px;">
+            {{ form.as_p }}
+        </div>
+        <button class="btn-add" type="submit" >Bulk Insert Products</button>
+    </form>
+</div>
+{% endblock %}

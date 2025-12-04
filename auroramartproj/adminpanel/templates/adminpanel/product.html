@@ -1,0 +1,272 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Products - AuroraMart Admin{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<style>
+    .status {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .status.active {
+        color:#047857;            
+        background:#ecfdf5;  
+        border-color:#a7f3d0;
+    }
+
+    .status.inactive {
+        color:#b91c1c;           
+        background:#fef2f2;       
+        border-color:#fecaca;
+    }
+</style>
+{% endblock %}
+
+{% block navbar %}
+{% include 'adminpanel/navbar.html' %}
+{% endblock %}
+
+{% block main_content %}
+
+    <div class="header-container">
+        <div class="header">
+            <div class="header-left">
+                <h1>Products</h1>
+                <p style="padding-bottom: 5px;">{{ total_products }} Products found</p>
+            </div>
+            <div class="header-right">
+                <button class="btn-add"><a style="color: white" href="./bulkInsert">Bulk Insert Product</a></button>
+                <button class="btn-add"><a style="color: white"href="./add">Add Product</a></button>
+            </div>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <script>alert("{{ message|escapejs }}");</script>
+        {% endfor %}
+        {% endif %}
+        
+        <form method="GET" id="page-size-form" class="filter-section">
+            <div class="filter-first-row">
+                <div class="filter-left">
+                    <input type="text" name="search" placeholder="Search products..." value="{{ request.GET.search }}">
+
+                    <button type="submit"><img width="14" height="14" src="https://img.icons8.com/?size=100&id=7eX13e1GI7bn&format=png&color=000000" alt="search"/> Search</button>
+            
+                    
+                </div>
+                <div class="filter-right">
+                    <label for="page_size"> Show:</label>
+                    <select name="page_size" id="page_size" onchange="document.getElementById('page-size-form').submit();">
+                        <option value="5" {% if request.GET.page_size == "5" %}selected{% endif %}>5</option>
+                        <option value="10" {% if request.GET.page_size == "10" or not request.GET.page_size %}selected{% endif %}>10
+                        </option>
+                        <option value="25" {% if request.GET.page_size == "25" %}selected{% endif %}>25</option>
+                        <option value="50" {% if request.GET.page_size == "50" %}selected{% endif %}>50</option>
+                    </select>
+                    entries per page
+                </div>
+            </div>
+        
+            <div class="filter-second-row">
+                <select name="category" id="category">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category }}" {% if request.GET.category == category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
+                <select name="subcategory" id="subcategory">
+                    <option value="">All Subcategories</option>
+                    {% for subcategory in subcategories %}
+                        <option value="{{ subcategory }}" {% if request.GET.subcategory == subcategory %}selected{% endif %}>{{ subcategory }}</option>
+                    {% endfor %}
+                </select>
+                <div class="price-range">
+                    <label for="min_price">Unit Price:</label>
+                    <input type="number" name="min_price" id="min_price" step="0.01" min="0"
+                           placeholder="Min" value="{{ request.GET.min_price }}">
+                    <span>–</span>
+                    <input type="number" name="max_price" id="max_price" step="0.01" min="0"
+                           placeholder="Max" value="{{ request.GET.max_price }}">
+                </div>
+                <div class="quantity-range">
+                    <label for="min_quantity">Quantity on Hand:</label>
+                    <input type="number" name="min_quantity" id="min_quantity" step="1"
+                           placeholder="Min" value="{{ request.GET.min_quantity }}">
+                    <span>–</span>
+                    <input type="number" name="max_quantity" id="max_quantity" step="1"
+                           placeholder="Max" value="{{ request.GET.max_quantity }}">
+                </div>
+                
+                <button type="submit">Apply Filters</button>
+                <a href="?{% if request.GET.page_size %}page_size={{ request.GET.page_size }}{% endif %}">
+                    <button type="button">Clear All</button></a>
+                
+            </div>
+            <p id="price-error" class="error-message" style="color: red; font-size: 14px; padding-top: 10px;"></p>
+        </form>
+    </div>
+
+    <div class="container">
+        
+    <form method="post" action="{% url 'product' %}" onsubmit="return confirm('Mark selected products inactive?');">
+            {% csrf_token %}
+            <input type="hidden" name="return_to" value="{{ request.get_full_path }}">
+        
+            <div style="margin: 8px 0;">
+                <button class="btn-add" style="margin-bottom: 15px;" type="submit">Mark Selected Inactive</button>
+            </div>
+
+            <div class="inner-nav">
+                <a href="{% url 'product' %}" class="nav-tab {% if selected_status == 'all' %}active{% endif %}">
+                All ({{ counts.all }})
+                </a>
+                <a href="{% url 'product_active' %}" class="nav-tab {% if selected_status == 'active' %}active{% endif %}">
+                    Active ({{ counts.active }})
+                </a>
+                <a href="{% url 'product_inactive' %}" class="nav-tab {% if selected_status == 'inactive' %}active{% endif %}">
+                    Inactive ({{ counts.inactive }})
+                </a>
+            </div>
+            
+            <div class="table-container">
+                <table width="100%">
+                    <thead>
+                        <tr>
+                            <th>Select
+                            </th>
+                            <th>SKU Code</th>
+                            <th>
+                                Product Name
+                                <a href="?{{ request.GET.urlencode|default:'' }}&sort=product_name&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                                    {% if request.GET.sort == 'product_name' %}
+                                    {% if request.GET.dir == 'asc' %} <img width="10" height="10" src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up"/> {% else %} <img width="10" height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down"/> {% endif %}
+                                    {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png" alt="generic-sorting"/>
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th>Product Description</th>
+                            <th>
+                                Product Category
+                                <a href="?{{ request.GET.urlencode|default:'' }}&sort=product_category&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                                    {% if request.GET.sort == 'product_category' %}
+                                    {% if request.GET.dir == 'asc' %}<img width="10" height="10" src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up"/> {% else %} <img width="10" height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down"/> {% endif %}
+                                    {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png" alt="generic-sorting"/>
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th>
+                                Product Subcategory
+                                <a href="?{{ request.GET.urlencode|default:'' }}&sort=product_subcategory&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                                    {% if request.GET.sort == 'product_subcategory' %}
+                                    {% if request.GET.dir == 'asc' %}<img width="10" height="10" src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up"/> {% else %} <img width="10" height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down"/> {% endif %}
+                                    {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png" alt="generic-sorting"/>
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th>
+                                Quantity on Hand
+                                <a href="?{{ request.GET.urlencode|default:'' }}&sort=quantity_on_hand&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                                    {% if request.GET.sort == 'quantity_on_hand' %}
+                                    {% if request.GET.dir == 'asc' %}<img width="10" height="10" src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up"/> {% else %} <img width="10" height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down"/> {% endif %}
+                                    {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png" alt="generic-sorting"/>
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th>
+                                Unit Price
+                                <a href="?{{ request.GET.urlencode|default:'' }}&sort=unit_price&dir={% if request.GET.dir == 'asc' %}desc{% else %}asc{% endif %}">
+                                    {% if request.GET.sort == 'unit_price' %}
+                                    {% if request.GET.dir == 'asc' %} <img width="10" height="10" src="https://img.icons8.com/ios-glyphs/30/sort-up.png" alt="sort-up"/> {% else %} <img width="10" height="10" src="https://img.icons8.com/fluency-systems-filled/48/sort-down.png" alt="sort-down"/> {% endif %}
+                                    {% else %} <img width="10" height="10" src="https://img.icons8.com/ios-filled/50/generic-sorting.png" alt="generic-sorting"/>
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td style="text-align: center;">
+                                <input type="checkbox" value="{{ product.pk }}" name="selected">
+                            </td>
+                            <td>{{ product.sku_code }}</td>
+                            <td>{{ product.product_name }}</td>
+                            <td>{{ product.product_description }}</td>
+                            <td>{{ product.product_category }}</td>
+                            <td>{{ product.product_subcategory }}</td>
+                            <td>{{ product.quantity_on_hand }}</td>
+                            <td>{{ product.unit_price }}</td>
+                            <td>
+                                <span class="status {{ product.status|lower }}">{{ product.status }}</span>
+                            </td>
+                            <td style="white-space: nowrap;">
+                                <a class="btn-add" href="{% url 'product_edit' product.pk %}" aria-label="Edit product {{ product.product_name }}" title="Edit product">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </a>
+
+                                {% if product.status == 'Active' %}
+                                <a class="btn-add" href="{% url 'product_delete' product.pk %}" title="Deactivate product"
+                                   onclick="return confirm('Mark this product inactive?');">
+                                    <span class="material-symbols-outlined">toggle_on</span>
+                                </a>
+                                {% else %}
+                                <a class="btn-add" href="{% url 'product_delete' product.pk %}" title="Reactivate product"
+                                   onclick="return confirm('Reactivate this product?');">
+                                    <span class="material-symbols-outlined">toggle_off</span>
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8">No product record available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        {% if is_paginated %}
+        <div class="pager">
+            <div class="pagination-left">
+                    Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
+                </div>
+            <div class="pagination-right">
+            {% if page_obj.has_previous %}
+            <a class="pager-arrow" href="?{{ request.GET.urlencode|default:'' }}&page={{ page_obj.previous_page_number }}">&lt;</a>
+            {% else %}
+            <span class="pager-arrow disabled">&lt;</span>
+            {% endif %}
+
+            {% for item in compact_page_range %}
+                {% if item == '...' %}
+                    <span class="pager-ellipsis">...</span>
+                {% else %}
+                    {% if item == page_obj.number %}
+                        <span class="pager-page active">{{ item }}</span>
+                    {% else %}
+                        <a class="pager-page" href="?{{ request.GET.urlencode|default:'' }}&page={{ item }}">{{ item }}</a>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a class="pager-arrow" href="?{{ request.GET.urlencode|default:'' }}&page={{ page_obj.next_page_number }}">&gt;</a>
+            {% else %}
+            <span class="pager-arrow disabled">&gt;</span>
+            {% endif %}
+            
+        </div>
+        {% endif %}
+            </div>
+    </form>
+</div>
+{% endblock %}

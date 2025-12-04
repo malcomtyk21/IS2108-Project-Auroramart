@@ -1,0 +1,79 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Edit Product - AuroraMart Admin{% endblock %}
+
+{% block navbar %}
+{% include 'adminpanel/navbar.html' %}
+{% endblock %}
+
+{% block main_content %}
+<div class="container">
+    <div class="form-card">
+        <div class="breadcrumb">
+            <a href="{% url 'product' %}" class="back-btn">Products</a> &rsaquo; Product #{{ object.id }}
+        </div>
+        <div class="header" style="padding: 20px 0px 20px 0px;">
+            <div class="header-left">
+                <h1>Update Products</h1>
+            </div>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="form">
+            {% csrf_token %}
+
+            <div class="form">
+                <label for="{{ form.sku_code.id_for_label }}">SKU Code</label>
+                {{ form.sku_code }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.product_name.id_for_label }}">Product Name</label>
+                {{ form.product_name }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.product_description.id_for_label }}">Description</label>
+                {{ form.product_description }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.product_category.id_for_label }}">Category</label>
+                {{ form.product_category }}
+            </div>
+
+            <div class="form" <label for="{{ form.product_subcategory.id_for_label }}">Subcategory</label>
+                {{ form.product_subcategory }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.quantity_on_hand.id_for_label }}">Quantity On Hand</label>
+                {{ form.quantity_on_hand }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.unit_price.id_for_label }}">Unit Price</label>
+                {{ form.unit_price }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.status.id_for_label }}">Status</label>
+                {{ form.status }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.image.id_for_label }}">Image (optional)</label>
+                {{ form.image }}
+                {% if object.image %}
+                    <p>Current image:</p>
+                    <img src="{{ object.image.url }}" alt="{{ object.product_name }}"
+                        style="max-width:160px;border-radius:8px;">
+                {% endif %}
+            </div>
+            
+
+            <button class="btn-add" type="submit">Save Changes</button>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

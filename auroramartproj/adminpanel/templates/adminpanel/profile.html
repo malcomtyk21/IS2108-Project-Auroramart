@@ -1,0 +1,71 @@
+{% extends 'adminpanel/base_admin.html' %}
+
+{% block title %}My Profile - AuroraMart Admin{% endblock %}
+
+{% block navbar %}
+{% include 'adminpanel/navbar.html' %}
+{% endblock %}
+
+{% block main_content %}
+<div class="container">
+    <div class="header" style="padding:20px 0;">
+        <div class="header-left">
+            <h1>My Profile</h1>
+        </div>
+        <div class="header-right">
+            <button class="btn-add"><a style="color: white"
+                    href="{% url 'user_edit' request.user.pk %}?from=profile">Edit Profile</a></button>
+            <button class="btn-add"><a style="color: white"
+                    href="{% url 'user_change_password' request.user.pk %}?from=profile">Change Password</a></button>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="form-alerts" role="alert" aria-live="polite" style="margin-bottom:16px;">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }}" style="color:blue">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="form">
+        <label>Username</label>
+        <input type="text" value="{{ user_obj.username }}" disabled>
+    </div>
+
+    <div class="form">
+        <label>First name</label>
+        <input type="text" value="{{ user_obj.first_name }}" disabled>
+    </div>
+
+    <div class="form">
+        <label>Last name</label>
+        <input type="text" value="{{ user_obj.last_name }}" disabled>
+    </div>
+
+    <div class="form">
+        <label>Email</label>
+        <input type="text" value="{{ user_obj.email }}" disabled>
+    </div>
+
+    <div class="form">
+        <label>Role</label>
+        <input type="text"
+            value="{% if user_obj.is_superuser %}Superadmin{% elif user_obj.is_staff %}Admin{% else %}Customer{% endif %}"
+            disabled>
+    </div>
+
+    <div class="form">
+        <label>Date Joined</label>
+        <input type="text" value="{{ user_obj.date_joined }}" disabled>
+    </div>
+
+    <div class="form">
+        <label>Last Login</label>
+        <input type="text" value="{{ user_obj.last_login }}" disabled>
+    </div>
+
+    <input type="hidden" name="from" value="profile" />
+
+</div>
+{% endblock %}

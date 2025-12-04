@@ -1,0 +1,70 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Add Admin - AuroraMart Admin{% endblock %}
+{% block navbar %}{% include 'adminpanel/navbar.html' %}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block main_content %}
+
+<div class="container">
+    <div class="header" style="padding: 0px 0px 10px 0px;">
+        <div class="header-left">
+            <h1>Add Admin</h1>
+        </div>
+    </div>
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="form">
+            <p>* fields are required</p>
+        </div>
+
+        <div class="form">
+            <label for="{{ form.username.id_for_label }}">Username*</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </div>
+
+        <div class="form">
+            <label for="{{ form.email.id_for_label }}">Email*</label>
+            {{ form.email }}
+            {{ form.email.errors }}
+        </div>
+
+        <div class="form">
+            <label for="{{ form.first_name.id_for_label }}">First name</label>
+            {{ form.first_name }}
+        </div>
+
+        <div class="form">
+            <label for="{{ form.last_name.id_for_label }}">Last name</label>
+            {{ form.last_name }}
+        </div>
+
+        <div class="form">
+            <label for="{{ form.password1.id_for_label }}">Password*</label>
+            {{ form.password1 }}
+            {{ form.password1.errors }}
+        </div>
+
+        <div class="form">
+            <label for="{{ form.password2.id_for_label }}">Confirm Password*</label>
+            {{ form.password2 }}
+            {{ form.password2.errors }}
+        </div>
+
+        <div class="form">
+            <label for="{{ form.role.id_for_label }}">Role</label>
+            {{ form.role }} {{ form.role.errors }}
+        </div>
+
+        <div class="form">
+            <button type="submit" class="btn-add">Create Admin</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

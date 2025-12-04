@@ -1,0 +1,54 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Edit User - AuroraMart Admin{% endblock %}
+
+{% block navbar %}
+{% include 'adminpanel/navbar.html' %}
+{% endblock %}
+
+{% block main_content %}
+<div class="container">
+        <div class="breadcrumb">
+          <a href="{% url 'user' %}" class="back-btn">Users</a> &rsaquo; User #{{ object.id }}
+        </div>
+        <div class="header" style="padding:10px 0;">
+            <div class="header-left">
+                <h1>Update User</h1>
+            </div>
+        </div>
+
+        <form method="post">
+            <div class="form">
+                {% csrf_token %}
+                <label>Username</label>
+                <input type="text" value="{{ object.username }}" disabled>
+            </div>
+
+            {# Preserve origin flag so the view can redirect appropriately #}
+            <input type="hidden" name="from" value="{{ request.GET.from }}">
+
+            <div class="form">
+                <label for="{{ form.first_name.id_for_label }}">First name</label>
+                {{ form.first_name }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.last_name.id_for_label }}">Last name</label>
+                {{ form.last_name }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                {{ form.email }}
+            </div>
+
+            <div class="form">
+                <label for="{{ form.is_active.id_for_label }}">Status</label>
+                {{ form.is_active }}
+            </div>
+
+        <button type="submit" class="btn-add" style="margin-top:12px;">Save Changes</button>
+        </form>
+    </div>
+{% endblock %}

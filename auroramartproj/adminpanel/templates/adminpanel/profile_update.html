@@ -1,0 +1,65 @@
+{% extends 'adminpanel/base_admin.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - AuroraMart Admin{% endblock %}
+
+{% block navbar %}
+{% include 'adminpanel/navbar.html' %}
+{% endblock %}
+
+{% block main_content %}
+<div class="container">
+    <div class="breadcrumb">
+        <a href="{% url 'profile' %}" class="back-btn">Profile</a> &rsaquo; Edit Profile
+    </div>
+    <div class="header" style="padding:10px 0;">
+        <div class="header-left">
+            <h1>Edit My Profile</h1>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="from" value="profile">
+        {# Preserve active status to avoid accidental self-deactivation (is_active is required in form) #}
+        <input type="hidden" name="is_active" value="{{ object.is_active|yesno:'True,False' }}">
+
+        <div class="form">
+            <label>Username</label>
+            <input type="text" value="{{ object.username }}" disabled>
+        </div>
+
+        <div class="form">
+            <label for="{{ form.first_name.id_for_label }}">First name</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+            <div class="errorlist" style="color:#b91c1c;">
+                {% for err in form.first_name.errors %}<div>{{ err }}</div>{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form">
+            <label for="{{ form.last_name.id_for_label }}">Last name</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+            <div class="errorlist" style="color:#b91c1c;">
+                {% for err in form.last_name.errors %}<div>{{ err }}</div>{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="form">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+            <div class="errorlist" style="color:#b91c1c;">
+                {% for err in form.email.errors %}<div>{{ err }}</div>{% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-add" style="margin-top:12px;">Save Changes</button>
+    </form>
+</div>
+{% endblock %}

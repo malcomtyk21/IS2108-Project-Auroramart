@@ -1,0 +1,285 @@
+{% load static %}
+<style>
+    .navbar {
+        background: var(--background);
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        position: sticky;
+    }
+
+    .nav-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        height: 72px;
+        width: auto;
+        cursor: pointer;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 32px;
+    }
+
+    .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .nav-links a {
+        position: relative;
+        text-decoration: none;
+        color: #111827;
+    }
+
+    .nav-links a::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        height: 3px;
+        width: 0;
+        background: linear-gradient(90deg, #00e5ff, #6a5ae0, #c471ed);
+        border-radius: 2px;
+        transition: width .28s ease;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+        width: 100%;
+    }
+
+    .user-menu {
+        position: relative;
+    }
+
+    .user-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fff;
+        border: 1px solid var(--border);
+        padding: 2px 8px 2px 2px;
+        border-radius: 999px;
+        cursor: pointer;
+    }
+
+
+    .user-dropdown {
+        position: absolute;
+        right: 0;
+        top: calc(100% + 8px);
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, .12);
+        min-width: 160px;
+        padding: 6px 0;
+        display: none;
+        z-index: 100;
+    }
+
+    .user-dropdown.show {
+        display: block;
+    }
+
+    .user-dropdown a {
+        display: block;
+        padding: 10px 14px;
+        color: #111827;
+        text-decoration: none;
+    }
+
+    .user-dropdown a:hover {
+        transform: scale(1.1);
+    }
+
+    .avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--border);
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .avatar:hover,
+    .logo:hover {
+        transform: scale(1.15);
+        border-color: var(--active-text);
+    }
+
+    .profile-circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        /* gray-200 */
+        color: #111827;
+        /* gray-900 */
+        font-weight: 600;
+        font-size: 18px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
+        user-select: none;
+        border: 1px solid #d1d5db;
+        transition: background .25s ease, color .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+    /* Hide dropdown by default on mobile */
+    @media (max-width:860px) {
+        .nav-right {
+            position: relative;
+        }
+
+        .nav-mid { position: relative; }
+
+        .nav-links {
+            display: none; /* hidden until hamburger toggled */
+            position: absolute;
+            top: 100%;
+            right: 0;
+            flex-direction: column;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 6px 0;
+            min-width: 180px;
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+            z-index: 120;
+            animation: dropdownFade .18s ease;
+        }
+
+        @keyframes dropdownFade { from { opacity:0; transform: translateY(-6px);} to { opacity:1; transform: translateY(0);} }
+
+        .nav-links.active { display: flex; }
+
+        .nav-links a {
+            padding: 10px 16px;
+            text-align: left;
+            font-size: 14px;
+            border-radius: 0;
+        }
+
+        .nav-links a:hover { background:#f3f4f6; }
+
+        .nav-links a::after { display:none; }
+    }
+
+    @media (min-width:861px) {
+        .menu-toggle {
+            display: none;
+        }
+
+        .nav-links {
+            position: static;
+            flex-direction: row;
+            width: auto;
+            padding: 0;
+            box-shadow: none;
+            border: none;
+            background: transparent;
+            gap: 8px;
+            top: auto;
+            right: auto;
+            animation: none;
+        }
+
+        .nav-links a {
+            padding: 6px 18px;
+            border-radius: 22px;
+            font-size: 14px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Mobile menu
+        const toggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        toggle?.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', String(!expanded));
+        });
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.nav-right')) {
+                navLinks.classList.remove('active');
+                toggle?.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Avatar dropdown (moved inside DOMContentLoaded so elements exist)
+        const userTrigger = document.getElementById('user-trigger');
+        const userDropdown = document.getElementById('user-dropdown');
+        const userArrow = document.getElementById('user-arrow');
+
+        userTrigger?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+            const expanded = userTrigger.getAttribute('aria-expanded') === 'true';
+            userTrigger.setAttribute('aria-expanded', String(!expanded));
+            if (userArrow) {
+                userArrow.textContent = userDropdown.classList.contains('show') ? '▴' : '▾';
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#user-menu')) {
+                userDropdown?.classList.remove('show');
+                userTrigger?.setAttribute('aria-expanded', 'false');
+                if (userArrow) userArrow.textContent = '▾';
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                userDropdown?.classList.remove('show');
+                userTrigger?.setAttribute('aria-expanded', 'false');
+                if (userArrow) userArrow.textContent = '▾';
+            }
+        });
+    });
+</script>
+
+<div class="nav-left">
+    <a href="{% url 'dashboard' %}">
+        <img src="{% static 'images/auroramart-logo.svg' %}" alt="AuroraMart Logo" class="logo" />
+    </a>
+</div>
+
+<div class="nav-mid">
+    <div id="nav-links" class="nav-links">
+        <a style="font-weight: 600;"href="{% url 'dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+        <a style="font-weight: 600;" href="{% url 'product' %}"
+            class="{% if request.resolver_match.url_name == 'product' %}active{% endif %}">Products</a>
+        <a style="font-weight: 600;" href="{% url 'user' %}" class="{% if request.resolver_match.url_name == 'user' or request.resolver_match.url_name == 'user_admin' or request.resolver_match.url_name == 'user_customer' %}active{% endif %}">Users</a>
+        <a style="font-weight: 600;" href="{% url 'order' %}"
+            class="{% if request.resolver_match.url_name == 'order' %}active{% endif %}">Orders</a>
+    </div>
+</div>
+
+<div class="nav-right">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <div class="user-menu" id="user-menu">
+        <button class="user-trigger" id="user-trigger" aria-haspopup="true" aria-expanded="false">
+            <span class="profile-circle">{{ user.username|first|upper }}</span>
+            <span id="user-arrow">▾</span>
+        </button>
+        <div class="user-dropdown" id="user-dropdown">
+            <a style="font-weight: 500; font-size: 14px;" href="{% url 'profile' %}">My Profile</a>
+            <a style="font-weight: 500; font-size: 14px;" href="{% url 'admin_logout' %}">Logout</a>
+        </div>
+    </div>
+</div>
